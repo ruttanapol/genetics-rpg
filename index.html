@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🧬 DNA Quest — ผจญภัยพันธุศาสตร์</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&family=Prompt:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0f1e;
+  --panel: #0f1729;
+  --panel2: #131d35;
+  --border: rgba(100,200,255,0.15);
+  --cyan: #00e5ff;
+  --purple: #a855f7;
+  --green: #22d3a0;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --dim: #64748b;
+  --hp-color: #22d3a0;
+  --mp-color: #818cf8;
+  --xp-color: #fbbf24;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{
+  background:var(--bg);
+  font-family:'Sarabun',sans-serif;
+  color:var(--text);
+  display:flex;flex-direction:column;
+  height:100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 20%,rgba(168,85,247,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 80%,rgba(0,229,255,0.05) 0%,transparent 50%);
+}
+
+/* ══════ SCREENS ══════ */
+.screen{display:none;width:100%;height:100%;}
+.screen.active{display:flex;}
+
+/* ══════ TITLE ══════ */
+#titleScreen{
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:0;position:relative;overflow:hidden;
+  padding:20px;
+}
+.title-particles{position:absolute;inset:0;pointer-events:none;}
+.particle{position:absolute;border-radius:50%;animation:floatP linear infinite;opacity:0.4;}
+@keyframes floatP{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0;}
+  10%{opacity:0.4;}90%{opacity:0.4;}
+  100%{transform:translateY(-100px) rotate(720deg);opacity:0;}
+}
+.title-dna{font-size:clamp(3rem,10vw,5rem);margin-bottom:8px;animation:dnaRotate 3s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(0,229,255,0.5));}
+@keyframes dnaRotate{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.08) rotate(3deg);}}
+.title-game{
+  font-family:'Prompt',sans-serif;font-size:clamp(1.8rem,7vw,4rem);font-weight:900;
+  background:linear-gradient(135deg,var(--cyan),var(--purple),var(--green));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;letter-spacing:-1px;
+}
+.title-sub{color:var(--dim);font-size:clamp(0.75rem,2.5vw,1rem);margin-bottom:20px;letter-spacing:2px;text-transform:uppercase;}
+.title-story{max-width:520px;color:#94a3b8;font-size:clamp(0.8rem,2.8vw,0.95rem);line-height:1.8;margin-bottom:28px;padding:0 10px;}
+.title-story strong{color:var(--cyan);}
+.btn-start{
+  padding:14px 44px;border-radius:50px;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  color:#fff;font-size:clamp(0.95rem,3vw,1.1rem);font-weight:700;
+  border:none;cursor:pointer;font-family:'Prompt',sans-serif;
+  box-shadow:0 0 40px rgba(0,229,255,0.3);
+  transition:all 0.3s;letter-spacing:1px;animation:pulse-btn 2s infinite;
+}
+@keyframes pulse-btn{0%,100%{box-shadow:0 0 40px rgba(0,229,255,0.3);}50%{box-shadow:0 0 60px rgba(168,85,247,0.5);}}
+.btn-start:hover{transform:translateY(-3px) scale(1.04);}
+
+/* ══════ GAME SCREEN ══════ */
+#gameScreen{flex-direction:column;height:100vh;overflow:hidden;}
+
+/* HUD */
+.hud{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.hud-avatar{font-size:1.4rem;flex-shrink:0;}
+.hud-center{display:flex;flex-direction:column;flex:1;min-width:0;gap:3px;}
+.hud-name{font-family:'Prompt',sans-serif;font-size:0.75rem;font-weight:700;color:var(--cyan);line-height:1;}
+.hud-bars{display:flex;flex-direction:column;gap:3px;}
+.bar-row{display:flex;align-items:center;gap:4px;}
+.bar-label{font-size:0.6rem;width:20px;color:var(--dim);font-weight:700;flex-shrink:0;}
+.bar-track{flex:1;height:7px;background:rgba(255,255,255,0.07);border-radius:50px;overflow:hidden;min-width:0;}
+.bar-fill{height:100%;border-radius:50px;transition:width 0.5s ease;}
+.bar-val{font-size:0.6rem;color:var(--dim);width:40px;text-align:right;flex-shrink:0;}
+.hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.hud-chips{display:flex;gap:5px;}
+.stat-chip{padding:2px 8px;border-radius:50px;font-size:0.65rem;font-weight:700;border:1px solid;white-space:nowrap;}
+.stat-gold{background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.3);color:var(--yellow);}
+.stat-lv{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3);color:var(--purple);}
+.hud-map-btn{padding:4px 10px;border-radius:8px;background:rgba(0,229,255,0.1);border:1px solid var(--border);color:var(--cyan);font-size:0.68rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.2s;white-space:nowrap;}
+.hud-map-btn:hover{background:rgba(0,229,255,0.2);}
+
+/* GAME MAIN */
+.game-main{display:flex;flex:1;overflow:hidden;min-height:0;}
+
+/* MAP PANEL */
+.map-panel{
+  width:180px;flex-shrink:0;background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;
+  transition:width 0.3s ease;
+}
+.map-panel.collapsed{width:0;overflow:hidden;}
+@media(max-width:600px){
+  .map-panel{
+    position:fixed;top:0;left:0;bottom:0;z-index:150;
+    width:200px;transform:translateX(-100%);transition:transform 0.3s ease;
+    box-shadow:4px 0 20px rgba(0,0,0,0.5);
+  }
+  .map-panel.open{transform:translateX(0);}
+}
+.map-title{padding:10px 12px;font-size:0.68rem;font-weight:700;color:var(--dim);letter-spacing:1px;border-bottom:1px solid var(--border);}
+.map-zone{padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background 0.2s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.map-zone:hover:not(.locked){background:rgba(0,229,255,0.05);}
+.map-zone.active{background:rgba(0,229,255,0.08);border-left:3px solid var(--cyan);}
+.map-zone.locked{opacity:0.4;cursor:not-allowed;}
+.zone-icon{font-size:1.1rem;flex-shrink:0;}
+.zone-info{flex:1;min-width:0;}
+.zone-name{font-size:0.76rem;font-weight:700;}
+.zone-sub{font-size:0.62rem;color:var(--dim);}
+.zone-lock{font-size:0.65rem;color:var(--dim);flex-shrink:0;}
+
+/* ADVENTURE */
+.adventure{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+/* SCENE */
+.scene{
+  position:relative;
+  height:clamp(120px,25vw,180px);flex-shrink:0;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.scene-canvas{width:100%;height:100%;display:block;}
+.scene-overlay{position:absolute;inset:0;background:linear-gradient(0deg,var(--panel) 0%,transparent 50%);pointer-events:none;}
+.battle-area{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-between;padding:8px 24px;}
+.fighter{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.fighter-sprite{font-size:clamp(2rem,8vw,3.2rem);animation:idle 2s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.6));}
+.fighter.enemy .fighter-sprite{animation:idleEnemy 2s ease-in-out infinite;}
+@keyframes idle{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+@keyframes idleEnemy{0%,100%{transform:translateY(0) scaleX(-1);}50%{transform:translateY(-7px) scaleX(-1);}}
+.fighter-name{font-size:0.65rem;font-weight:700;background:rgba(0,0,0,0.5);padding:2px 8px;border-radius:50px;backdrop-filter:blur(4px);}
+.fighter-hp-bar{width:70px;height:5px;background:rgba(255,255,255,0.1);border-radius:50px;overflow:hidden;}
+.fighter-hp-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#22d3a0,#00e5ff);transition:width 0.5s ease;}
+.enemy .fighter-hp-fill{background:linear-gradient(90deg,#f87171,#fb923c);}
+
+/* DIALOGUE */
+.dialogue-box{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:5px;min-height:0;}
+.msg{padding:7px 12px;border-radius:12px;font-size:clamp(0.76rem,2.5vw,0.84rem);line-height:1.6;max-width:92%;animation:msgIn 0.3s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.msg.narrator{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--dim);font-style:italic;align-self:center;text-align:center;max-width:100%;}
+.msg.npc{background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.2);color:var(--text);align-self:flex-start;}
+.msg.player{background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);color:var(--text);align-self:flex-end;}
+.msg.reward{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);color:var(--yellow);align-self:center;text-align:center;}
+.msg.damage{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);color:var(--red);align-self:center;text-align:center;}
+
+/* ACTIONS */
+.action-area{padding:8px 10px;background:var(--panel);border-top:1px solid var(--border);flex-shrink:0;}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.action-btn{
+  padding:8px 10px;border-radius:10px;
+  background:var(--panel2);border:1px solid var(--border);
+  color:var(--text);cursor:pointer;font-size:clamp(0.72rem,2.5vw,0.78rem);font-weight:600;
+  font-family:'Sarabun',sans-serif;text-align:left;transition:all 0.2s;
+  display:flex;align-items:center;gap:5px;min-height:42px;
+}
+.action-btn:hover:not(:disabled){border-color:var(--cyan);background:rgba(0,229,255,0.07);transform:translateY(-1px);}
+.action-btn:active:not(:disabled){transform:scale(0.97);}
+.action-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.action-btn .cost{margin-left:auto;font-size:0.6rem;color:var(--mp-color);flex-shrink:0;}
+.action-btn.danger{border-color:rgba(248,113,113,0.3);}
+.action-btn.danger:hover:not(:disabled){background:rgba(248,113,113,0.07);border-color:var(--red);}
+
+/* RIGHT PANEL — hidden on small mobile, shown as bottom sheet toggle */
+.right-panel{
+  width:175px;flex-shrink:0;background:var(--panel);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+@media(max-width:700px){.right-panel{display:none;}}
+.rp-section{padding:10px 10px;border-bottom:1px solid var(--border);}
+.rp-title{font-size:0.62rem;color:var(--dim);font-weight:700;letter-spacing:1px;margin-bottom:7px;}
+.skill-item{display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:4px;font-size:0.72rem;border:1px solid transparent;transition:all 0.2s;}
+.skill-item.learned{border-color:rgba(34,211,160,0.2);}
+.skill-item.locked{opacity:0.4;}
+.skill-icon{font-size:0.95rem;}
+.skill-name{flex:1;font-size:0.68rem;}
+.skill-badge{font-size:0.58rem;padding:1px 6px;border-radius:50px;font-weight:700;}
+.badge-learned{background:rgba(34,211,160,0.15);color:var(--green);}
+.badge-locked{background:rgba(100,116,139,0.2);color:var(--dim);}
+.item-row{display:flex;align-items:center;gap:6px;font-size:0.72rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.item-row:last-child{border:none;}
+.item-count{margin-left:auto;color:var(--yellow);font-weight:700;font-size:0.68rem;}
+
+/* QUIZ MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:14px;}
+.modal-overlay.hidden{display:none;}
+.quiz-modal{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:clamp(16px,4vw,24px);max-width:480px;width:100%;box-shadow:0 0 60px rgba(0,229,255,0.1);max-height:90vh;overflow-y:auto;}
+.quiz-modal h3{font-family:'Prompt',sans-serif;font-size:clamp(0.95rem,3vw,1.1rem);margin-bottom:5px;color:var(--cyan);}
+.quiz-timer{font-size:0.78rem;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.timer-bar{flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:50px;overflow:hidden;}
+.timer-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:50px;transition:width 0.1s linear;}
+.quiz-q{font-size:clamp(0.85rem,2.8vw,0.95rem);line-height:1.65;margin-bottom:16px;font-weight:600;}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;}
+.qopt{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:var(--text);cursor:pointer;text-align:left;font-size:clamp(0.8rem,2.8vw,0.85rem);font-family:'Sarabun',sans-serif;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.qopt:hover:not(:disabled){border-color:var(--cyan);background:rgba(0,229,255,0.07);}
+.qopt:active:not(:disabled){transform:scale(0.98);}
+.qopt.correct{border-color:var(--green);background:rgba(34,211,160,0.1);color:var(--green);}
+.qopt.wrong{border-color:var(--red);background:rgba(248,113,113,0.08);color:var(--red);}
+.quiz-result{margin-top:12px;padding:11px 14px;border-radius:10px;font-size:clamp(0.78rem,2.5vw,0.85rem);display:none;}
+.quiz-result.show{display:block;}
+.quiz-result.ok{background:rgba(34,211,160,0.08);border:1px solid rgba(34,211,160,0.25);color:var(--green);}
+.quiz-result.no{background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.2);color:var(--red);}
+.quiz-continue{margin-top:12px;width:100%;padding:11px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;border:none;cursor:pointer;font-size:clamp(0.85rem,2.8vw,0.9rem);font-weight:700;font-family:'Sarabun',sans-serif;display:none;}
+.quiz-continue.show{display:block;}
+
+/* LEARN MODAL */
+.learn-modal{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:clamp(16px,4vw,24px);max-width:440px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 0 40px rgba(34,211,160,0.1);}
+.learn-modal h3{font-family:'Prompt',sans-serif;font-size:clamp(0.9rem,3vw,1.05rem);color:var(--green);margin-bottom:14px;}
+.learn-card{background:rgba(255,255,255,0.03);border:1px solid rgba(34,211,160,0.15);border-radius:12px;padding:12px 14px;margin-bottom:10px;}
+.learn-card h4{font-size:0.78rem;color:var(--cyan);margin-bottom:6px;font-weight:700;}
+.learn-card p{font-size:0.8rem;line-height:1.7;color:var(--text);}
+.learn-card .tag{display:inline-block;font-size:0.62rem;padding:2px 8px;border-radius:50px;background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.2);margin-bottom:6px;}
+
+/* FLOAT DMG */
+.float-num{position:fixed;pointer-events:none;z-index:300;font-family:'Prompt',sans-serif;font-size:1.3rem;font-weight:900;animation:floatUp 1.2s ease forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-55px) scale(1.3);}}
+
+/* LEVEL UP */
+.levelup-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:400;text-align:center;background:var(--panel);border:2px solid var(--yellow);border-radius:20px;padding:clamp(18px,5vw,28px) clamp(28px,8vw,48px);box-shadow:0 0 60px rgba(251,191,36,0.3);transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);}
+.levelup-banner.show{transform:translate(-50%,-50%) scale(1);}
+.levelup-title{font-family:'Prompt',sans-serif;font-size:clamp(1.4rem,6vw,2rem);font-weight:900;color:var(--yellow);margin-bottom:6px;}
+.levelup-sub{color:var(--dim);font-size:clamp(0.8rem,2.5vw,0.9rem);}
+
+/* MAP OVERLAY for mobile */
+.map-overlay{display:none;position:fixed;inset:0;z-index:140;background:rgba(0,0,0,0.5);}
+@media(max-width:600px){.map-overlay.show{display:block;}}
+
+/* DROP POPUP */
+.drop-popup{
+  position:fixed;left:50%;transform:translateX(-50%) scale(0);
+  z-index:450;text-align:center;
+  background:var(--panel);border:2px solid var(--yellow);
+  border-radius:18px;padding:20px 36px;
+  box-shadow:0 0 50px rgba(251,191,36,0.4);
+  transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.drop-popup.show{transform:translateX(-50%) scale(1);}
+.drop-title{font-family:'Prompt',sans-serif;font-size:1.1rem;font-weight:900;color:var(--yellow);margin-bottom:4px;}
+.drop-body{font-size:0.88rem;color:var(--text);}
+.drop-star{font-size:1.8rem;animation:spinStar 0.8s ease;}
+@keyframes spinStar{0%{transform:rotate(0) scale(0);}60%{transform:rotate(380deg) scale(1.3);}100%{transform:rotate(360deg) scale(1);}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(100,200,255,0.2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div id="titleScreen" class="screen active">
+  <div class="title-particles" id="particles"></div>
+  <div class="title-dna">🧬</div>
+  <div class="title-game">DNA QUEST</div>
+  <div class="title-sub">ผจญภัยพันธุศาสตร์</div>
+  <div class="title-story">
+    โลก <strong>Bio-Sphere</strong> กำลังพังทลาย — ไวรัสกลายพันธุ์ได้บุกรุกเข้าไปใน
+    <strong>ห้องสมุด DNA</strong> และกำลังทำลายข้อมูลพันธุกรรมทั้งหมด!<br><br>
+    คุณคือ <strong>นักวิทยาศาสตร์รุ่นใหม่</strong> ที่ต้องออกผจญภัย
+    ตอบคำถามพันธุศาสตร์เพื่อเอาชนะศัตรู และกอบกู้รหัส DNA ให้กลับคืนมา!
+  </div>
+  <button class="btn-start" onclick="startGame()">⚔️ เริ่มผจญภัย</button>
+  <div style="margin-top:24px;font-size:0.75rem;color:#475569;letter-spacing:1.5px;text-transform:uppercase;">
+    Created by <span style="color:var(--cyan);font-weight:700;letter-spacing:2px;">Kru Rattanapol</span>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" class="screen">
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-avatar" id="hudAvatar">🧑‍🔬</div>
+    <div class="hud-center">
+      <div class="hud-name" id="hudName">นักวิทยาศาสตร์</div>
+      <div class="hud-bars">
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--hp-color)">HP</div>
+          <div class="bar-track"><div class="bar-fill" id="hpBar" style="background:linear-gradient(90deg,#22d3a0,#00e5ff);width:100%"></div></div>
+          <div class="bar-val" id="hpVal">100/100</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--mp-color)">MP</div>
+          <div class="bar-track"><div class="bar-fill" id="mpBar" style="background:linear-gradient(90deg,#818cf8,#a855f7);width:100%"></div></div>
+          <div class="bar-val" id="mpVal">50/50</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--xp-color)">XP</div>
+          <div class="bar-track"><div class="bar-fill" id="xpBar" style="background:linear-gradient(90deg,#fbbf24,#f59e0b);width:0%"></div></div>
+          <div class="bar-val" id="xpVal">0/100</div>
+        </div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div class="hud-chips">
+        <div class="stat-chip stat-lv" id="hudLv">Lv.1</div>
+        <div class="stat-chip stat-gold" id="hudGold">💰 0</div>
+      </div>
+      <div style="display:flex;gap:5px;align-items:center;">
+        <button class="hud-map-btn" id="musicBtn" onclick="toggleMusic()" title="เปิด/ปิดเสียง">🔊</button>
+        <button class="hud-map-btn" onclick="toggleMap()">🗺️ แผนที่</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-overlay" id="mapOverlay" onclick="toggleMap()"></div>
+
+  <div class="game-main">
+
+    <!-- MAP -->
+    <div class="map-panel" id="mapPanel">
+      <div class="map-title">🗺️ แผนที่ Bio-Sphere</div>
+      <div class="map-zone active" onclick="goZone(0)">
+        <div class="zone-icon">🏫</div>
+        <div class="zone-info"><div class="zone-name">ห้องสมุด DNA</div><div class="zone-sub">โซนเริ่มต้น</div></div>
+      </div>
+      <div class="map-zone" id="zone1El" onclick="goZone(1)">
+        <div class="zone-icon">🔬</div>
+        <div class="zone-info"><div class="zone-name">ห้องแล็บโครโมโซม</div><div class="zone-sub">Lv.2 ขึ้นไป</div></div>
+        <div class="zone-lock" id="zone1lock">🔒</div>
+      </div>
+      <div class="map-zone" id="zone2El" onclick="goZone(2)">
+        <div class="zone-icon">⚗️</div>
+        <div class="zone-info"><div class="zone-name">ป้อมเมนเดล</div><div class="zone-sub">Lv.3 ขึ้นไป</div></div>
+        <div class="zone-lock" id="zone2lock">🔒</div>
+      </div>
+      <div class="map-zone locked" id="zone3El">
+        <div class="zone-icon">💀</div>
+        <div class="zone-info"><div class="zone-name">แดนมืด Mutation</div><div class="zone-sub">Lv.5 ขึ้นไป</div></div>
+        <div class="zone-lock">🔒</div>
+      </div>
+    </div>
+
+    <!-- ADVENTURE CENTER -->
+    <div class="adventure">
+      <div class="scene">
+        <canvas class="scene-canvas" id="sceneCanvas"></canvas>
+        <div class="scene-overlay"></div>
+        <div class="battle-area" id="battleArea">
+          <div class="fighter" id="playerFighter">
+            <div class="fighter-sprite" id="playerSprite">🧑‍🔬</div>
+            <div class="fighter-name">คุณ</div>
+            <div class="fighter-hp-bar"><div class="fighter-hp-fill" id="playerFighterHP" style="width:100%"></div></div>
+          </div>
+          <div class="fighter enemy" id="enemyFighter" style="display:none">
+            <div class="fighter-hp-bar"><div class="fighter-hp-fill" id="enemyFighterHP" style="width:100%"></div></div>
+            <div class="fighter-name" id="enemyName">—</div>
+            <div class="fighter-sprite" id="enemySprite">👾</div>
+          </div>
+        </div>
+      </div>
+      <div class="dialogue-box" id="dialogueBox"></div>
+      <div class="action-area">
+        <div class="action-grid" id="actionGrid"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="rp-section">
+        <div class="rp-title">⚡ ทักษะ</div>
+        <div id="skillList"></div>
+      </div>
+      <div class="rp-section">
+        <div class="rp-title">🎒 ไอเทม</div>
+        <div id="itemList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="modal-overlay hidden" id="quizModal">
+  <div class="quiz-modal">
+    <h3 id="qTitle">⚔️ คำถามพันธุศาสตร์</h3>
+    <div class="quiz-timer">
+      <span id="timerLabel">⏱ 20s</span>
+      <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+    </div>
+    <div class="quiz-q" id="quizQ"></div>
+    <div class="quiz-opts" id="quizOpts"></div>
+    <div class="quiz-result" id="quizResult"></div>
+    <button class="quiz-continue" id="quizContinue" onclick="continueAfterQuiz()">ดำเนินการต่อ →</button>
+  </div>
+</div>
+
+<!-- LEARN MODAL -->
+<div class="modal-overlay hidden" id="learnModal">
+  <div class="learn-modal" id="learnModalContent">
+    <h3>📚 ความรู้พันธุศาสตร์</h3>
+    <div id="learnCards"></div>
+    <button class="quiz-continue show" onclick="closeLearn()">ปิด ×</button>
+  </div>
+</div>
+
+<!-- LEVEL UP BANNER -->
+<div class="levelup-banner" id="lvBanner">
+  <div class="levelup-title">⬆️ LEVEL UP!</div>
+  <div class="levelup-sub" id="lvBannerSub">คุณขึ้นเลเวล!</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  GAME STATE
+// ══════════════════════════════════════════
+const G = {
+  name:'นักวิทยาศาสตร์',lv:1,xp:0,xpMax:100,
+  hp:100,hpMax:100,mp:50,mpMax:50,gold:0,
+  zone:0,skills:['analyze','quiz_attack'],
+  items:{potion:2,dna_fragment:0},
+  inBattle:false,enemy:null,
+  quizCallback:null,quizCorrect:false,quizTimeout:false,
+  timerInterval:null,
+  questionQueue:{0:[],1:[],2:[]},
+  musicOn:true,
+};
+
+// ══════════════════════════════════════════
+//  WEB AUDIO — PROCEDURAL BGM + SFX
+// ══════════════════════════════════════════
+let _ac=null,_masterGain=null,_bgmNodes=[],_bgmTimeout=null;
+const BGM={
+  0:{ // zone 0 — calm sci-fi ambient
+    bpm:90,
+    melody:[
+      [261,0.4],[293,0.4],[329,0.8],[293,0.4],[261,0.4],[220,0.8],
+      [246,0.4],[261,0.4],[293,0.4],[329,0.8],[349,0.4],[329,1.2],
+    ],
+    bass:[196,220,164,196],
+    pad:[130,164,196,220],
+  },
+  1:{ // zone 1 — tense lab
+    bpm:112,
+    melody:[
+      [349,0.3],[329,0.3],[311,0.6],[293,0.3],[329,0.3],[349,0.6],
+      [392,0.3],[370,0.3],[349,0.6],[329,0.3],[311,0.6],[293,1.2],
+    ],
+    bass:[196,175,196,233],
+    pad:[155,175,196,233],
+  },
+  2:{ // zone 2 — epic boss
+    bpm:132,
+    melody:[
+      [392,0.25],[440,0.25],[466,0.5],[440,0.25],[392,0.25],[349,0.5],
+      [392,0.25],[329,0.25],[349,0.5],[293,0.25],[311,0.25],[329,1.0],
+    ],
+    bass:[196,220,175,196],
+    pad:[196,220,261,233],
+  },
+};
+
+function getAC(){
+  if(!_ac){_ac=new(window.AudioContext||window.webkitAudioContext)();_masterGain=_ac.createGain();_masterGain.gain.value=0.28;_masterGain.connect(_ac.destination);}
+  return _ac;
+}
+
+function makeSynth(type,freq,duration,vol,detune=0,delay=0){
+  try{
+    const ac=getAC(),now=ac.currentTime+delay;
+    const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();
+    osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;
+    f.type='lowpass';f.frequency.value=1800;
+    g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,now+duration);
+    osc.connect(f);f.connect(g);g.connect(_masterGain);
+    osc.start(now);osc.stop(now+duration+0.05);
+  }catch(e){}
+}
+
+function playBGM(zone){
+  stopBGM();
+  if(!G.musicOn)return;
+  const ac=getAC();if(ac.state==='suspended')ac.resume();
+  const data=BGM[zone]||BGM[0];
+  const beat=60/data.bpm;
+
+  function loopMelody(startTime,idx){
+    if(!G.musicOn)return;
+    const note=data.melody[idx%data.melody.length];
+    makeSynth('triangle',note[0],note[1]*beat*0.85,0.18,0,startTime-ac.currentTime);
+    // harmony a 5th up
+    makeSynth('sine',note[0]*1.5,note[1]*beat*0.7,0.06,0,startTime-ac.currentTime);
+    const next=startTime+note[1]*beat;
+    const t=_bgmTimeout=setTimeout(()=>loopMelody(next,idx+1),(next-ac.currentTime)*1000-40);
+    _bgmNodes.push(t);
+  }
+
+  function loopBass(startTime,idx){
+    if(!G.musicOn)return;
+    const freq=data.bass[idx%data.bass.length];
+    makeSynth('sawtooth',freq,beat*1.8,0.12,-10,startTime-ac.currentTime);
+    const next=startTime+beat*2;
+    const t=setTimeout(()=>loopBass(next,idx+1),(next-ac.currentTime)*1000-40);
+    _bgmNodes.push(t);
+  }
+
+  function loopPad(startTime,idx){
+    if(!G.musicOn)return;
+    const freq=data.pad[idx%data.pad.length];
+    makeSynth('sine',freq,beat*3.8,0.08,0,startTime-ac.currentTime);
+    const next=startTime+beat*4;
+    const t=setTimeout(()=>loopPad(next,idx+1),(next-ac.currentTime)*1000-40);
+    _bgmNodes.push(t);
+  }
+
+  const now=ac.currentTime+0.05;
+  loopMelody(now,0);loopBass(now,0);loopPad(now,0);
+}
+
+function stopBGM(){
+  _bgmNodes.forEach(t=>clearTimeout(t));_bgmNodes=[];
+}
+
+function toggleMusic(){
+  G.musicOn=!G.musicOn;
+  const btn=document.getElementById('musicBtn');
+  if(G.musicOn){playBGM(G.zone);if(btn)btn.textContent='🔊';}
+  else{stopBGM();if(btn)btn.textContent='🔇';}
+}
+
+// SFX
+function sfxCorrect(){
+  try{
+    [523,659,784,1047].forEach((f,i)=>makeSynth('triangle',f,0.15,0.22,0,i*0.07));
+  }catch(e){}
+}
+function sfxWrong(){
+  try{
+    [220,196,174].forEach((f,i)=>makeSynth('sawtooth',f,0.2,0.18,0,i*0.08));
+  }catch(e){}
+}
+function sfxLevelUp(){
+  try{
+    [523,659,784,1047,1319].forEach((f,i)=>makeSynth('triangle',f,0.25,0.25,0,i*0.09));
+  }catch(e){}
+}
+function sfxDrop(){
+  try{
+    [784,880,1047,784].forEach((f,i)=>makeSynth('sine',f,0.18,0.28,0,i*0.06));
+  }catch(e){}
+}
+function sfxHit(){
+  try{
+    makeSynth('sawtooth',110,0.12,0.3,0,0);
+    makeSynth('sawtooth',82,0.18,0.2,0,0.05);
+  }catch(e){}
+}
+function sfxVictory(){
+  try{
+    [523,659,784,659,784,1047].forEach((f,i)=>makeSynth('triangle',f,0.22,0.24,0,i*0.1));
+  }catch(e){}
+}
+
+
+const SKILLS = {
+  analyze:     {name:'วิเคราะห์ DNA',icon:'🔍',cost:5,learned:true},
+  quiz_attack: {name:'ตอบคำถาม!',icon:'❓',cost:10,learned:true},
+  gene_shield: {name:'โล่จีน',icon:'🛡️',cost:15,learned:false,lvReq:2},
+  mutation_ray:{name:'รังสีมิวเทชัน',icon:'☢️',cost:20,learned:false,lvReq:3},
+  rna_heal:    {name:'RNA รักษา',icon:'💊',cost:12,learned:false,lvReq:2},
+};
+
+const ENEMIES = {
+  0:[
+    {name:'ไวรัสกลายพันธุ์',sprite:'🦠',hp:40,maxHp:40,atk:8,xp:25,gold:10,color:'#22d3a0'},
+    {name:'แบคทีเรียดื้อยา',sprite:'🧫',hp:55,maxHp:55,atk:12,xp:35,gold:15,color:'#a855f7'},
+  ],
+  1:[
+    {name:'โครโมโซมกลายพันธุ์',sprite:'🌀',hp:75,maxHp:75,atk:16,xp:50,gold:20,color:'#f87171'},
+    {name:'มิวแทนต์เซลล์',sprite:'👾',hp:90,maxHp:90,atk:20,xp:65,gold:28,color:'#fb923c'},
+  ],
+  2:[
+    {name:'บอสเมนเดล',sprite:'💀',hp:150,maxHp:150,atk:28,xp:120,gold:60,color:'#f59e0b',isBoss:true},
+  ],
+};
+
+// ══════════════════════════════════════════
+//  28 QUESTIONS — zone 0: 10, zone 1: 9, zone 2: 9
+// ══════════════════════════════════════════
+const ALL_QUESTIONS = [
+  // ── ZONE 0: DNA พื้นฐาน (10 ข้อ) ──
+  {z:0,q:'DNA มีโครงสร้างเป็นแบบใด?',opts:['เส้นตรงเดี่ยว','ทวิสต์คู่ (Double Helix)','วงกลม','สามสาย'],ans:1,dmg:28,exp:'DNA มีโครงสร้างเป็น Double Helix ค้นพบโดย Watson & Crick ปี 1953 โดยใช้ภาพเอกซเรย์ของ Rosalind Franklin'},
+  {z:0,q:'คู่เบสใดจับกันใน DNA?',opts:['A-G และ T-C','A-C และ G-T','A-T และ G-C','A-A และ G-G'],ans:2,dmg:28,exp:'A-T จับด้วยพันธะไฮโดรเจน 2 พันธะ, G-C จับด้วย 3 พันธะ ตาม "กฎ Chargaff"'},
+  {z:0,q:'DNA อยู่ในส่วนใดของเซลล์เป็นหลัก?',opts:['ไมโทคอนเดรีย','เยื่อหุ้มเซลล์','นิวเคลียส','ไรโบโซม'],ans:2,dmg:25,exp:'DNA ส่วนใหญ่อยู่ในนิวเคลียส แต่มีบางส่วนอยู่ในไมโทคอนเดรียด้วย เรียกว่า mtDNA'},
+  {z:0,q:'นิวคลีโอไทด์ประกอบด้วยอะไรบ้าง?',opts:['กรดอะมิโน+ฟอสเฟต','น้ำตาล+ฟอสเฟต+เบส','กรดไขมัน+เบส','น้ำตาล+กรดอะมิโน'],ans:1,dmg:30,exp:'นิวคลีโอไทด์ = น้ำตาลดีออกซีไรโบส + หมู่ฟอสเฟต + เบสไนโตรเจน เป็นหน่วยย่อยของ DNA'},
+  {z:0,q:'RNA ต่างจาก DNA ในเรื่องใด?',opts:['RNA มีเบสต่างชนิด','RNA เป็นสายเดี่ยวและมี U แทน T','RNA อยู่ในนิวเคลียส','RNA มีขนาดใหญ่กว่า'],ans:1,dmg:30,exp:'RNA เป็นสายเดี่ยว มีน้ำตาลไรโบส และใช้เบส Uracil (U) แทน Thymine (T) ที่มีใน DNA'},
+  {z:0,q:'กระบวนการ Replication คืออะไร?',opts:['การสร้างโปรตีน','การคัดลอก DNA ใหม่','การส่ง mRNA','การย่อยสลาย RNA'],ans:1,dmg:32,exp:'DNA Replication คือการจำลอง DNA ให้ได้ 2 ชุดก่อนแบ่งเซลล์ เอนไซม์ DNA Polymerase เป็นตัวสำคัญ'},
+  {z:0,q:'เบสชนิดใดไม่มีใน DNA?',opts:['Adenine','Uracil','Guanine','Cytosine'],ans:1,dmg:26,exp:'Uracil (U) มีเฉพาะใน RNA ใน DNA จะใช้ Thymine (T) แทน ทั้งสองเป็นเบสกลุ่ม Pyrimidine'},
+  {z:0,q:'Transcription คือกระบวนการใด?',opts:['จาก DNA → mRNA','จาก mRNA → โปรตีน','จาก DNA → โปรตีน','จาก RNA → DNA'],ans:0,dmg:30,exp:'Transcription แปลง DNA เป็น mRNA เกิดในนิวเคลียส จากนั้น mRNA จะออกไปสร้างโปรตีนที่ไรโบโซม'},
+  {z:0,q:'ใครค้นพบโครงสร้าง Double Helix ของ DNA?',opts:['Mendel & Darwin','Watson & Crick','Pasteur & Koch','Curie & Einstein'],ans:1,dmg:24,exp:'Watson & Crick ค้นพบปี 1953 และได้รับรางวัลโนเบลปี 1962 โดยอาศัยข้อมูล X-ray ของ Rosalind Franklin'},
+  {z:0,q:'Translation คือกระบวนการใด?',opts:['จาก DNA → mRNA','จาก mRNA → โปรตีน','จาก DNA → tRNA','จาก rRNA → DNA'],ans:1,dmg:32,exp:'Translation แปลรหัส mRNA เป็นกรดอะมิโน เกิดที่ไรโบโซม โดย tRNA นำกรดอะมิโนมาต่อกันเป็นโปรตีน'},
+
+  // ── ZONE 1: โครโมโซม (9 ข้อ) ──
+  {z:1,q:'มนุษย์มีโครโมโซมกี่แท่ง?',opts:['23','44','46','48'],ans:2,dmg:35,exp:'มนุษย์มีโครโมโซม 46 แท่ง (23 คู่) ได้รับจากพ่อ 23 แท่ง + แม่ 23 แท่ง'},
+  {z:1,q:'โครโมโซมเพศของผู้ชายคืออะไร?',opts:['XX','XY','YY','XO'],ans:1,dmg:35,exp:'ผู้ชายมีโครโมโซมเพศ XY ส่วนผู้หญิงมี XX โครโมโซม Y กำหนดเพศชาย'},
+  {z:1,q:'Karyotype คืออะไร?',opts:['รหัสพันธุกรรม','ภาพถ่ายและจัดเรียงโครโมโซม','ยีนพิเศษ','ฮอร์โมน'],ans:1,dmg:38,exp:'Karyotype คือการจัดเรียงโครโมโซมทั้ง 46 แท่งเป็นคู่ ใช้ตรวจความผิดปกติ เช่น ดาวน์ซินโดรม (Trisomy 21)'},
+  {z:1,q:'ดาวน์ซินโดรมเกิดจากอะไร?',opts:['โครโมโซม 21 เกิน 1 แท่ง','โครโมโซม X หาย','โครโมโซม Y กลายพันธุ์','โครโมโซม 13 ขาด'],ans:0,dmg:40,exp:'ดาวน์ซินโดรม (Trisomy 21) เกิดจากมีโครโมโซมคู่ที่ 21 จำนวน 3 แท่ง แทนที่จะเป็น 2 แท่ง'},
+  {z:1,q:'เซลล์สืบพันธุ์มนุษย์มีโครโมโซมกี่แท่ง?',opts:['46','23','92','12'],ans:1,dmg:36,exp:'เซลล์สืบพันธุ์ (ไข่และอสุจิ) มี 23 แท่ง (Haploid = n) เมื่อปฏิสนธิจะได้ 46 แท่ง (Diploid = 2n)'},
+  {z:1,q:'Mitosis คือการแบ่งเซลล์แบบใด?',opts:['ลดโครโมโซมครึ่งหนึ่ง','ได้เซลล์ลูก 2 ชุดเหมือนเดิม','ได้เซลล์ 4 ชุด','เฉพาะในเซลล์สืบพันธุ์'],ans:1,dmg:38,exp:'Mitosis แบ่งได้เซลล์ลูก 2 เซลล์ที่มีโครโมโซมเท่าเดิม (2n→2n) ใช้สำหรับการเจริญเติบโตและซ่อมแซม'},
+  {z:1,q:'Meiosis ต่างจาก Mitosis อย่างไร?',opts:['Meiosis เร็วกว่า','Meiosis ลดโครโมโซมเหลือครึ่งหนึ่ง','Meiosis ใช้เวลาน้อยกว่า','Meiosis ได้เซลล์ 2 ใบ'],ans:1,dmg:40,exp:'Meiosis เกิด 2 รอบ ได้เซลล์ 4 ใบ แต่ละใบมีโครโมโซมครึ่งหนึ่ง (2n→n) ใช้สร้างเซลล์สืบพันธุ์'},
+  {z:1,q:'เทิร์นเนอร์ซินโดรมเกิดจากอะไร?',opts:['มีโครโมโซม X เดียว (45,X)','มีโครโมโซม Y สามตัว','โครโมโซม 18 เกิน','โครโมโซม X สามตัว'],ans:0,dmg:42,exp:'Turner syndrome (45,X) เกิดในผู้หญิงที่มีโครโมโซม X เพียงตัวเดียว ทำให้ไม่มีประจำเดือนและเตี้ย'},
+  {z:1,q:'Crossing Over เกิดในระยะใด?',opts:['Mitosis Prophase','Meiosis I Prophase','Meiosis II Anaphase','Interphase'],ans:1,dmg:44,exp:'Crossing Over เกิดใน Prophase I ของ Meiosis I โครโมโซมที่คล้ายกันแลกเปลี่ยนชิ้นส่วน ทำให้เกิดความหลากหลายทางพันธุกรรม'},
+
+  // ── ZONE 2: พันธุกรรมเมนเดล (9 ข้อ) ──
+  {z:2,q:'Rr × Rr อัตราส่วนฟีโนไทป์คือ?',opts:['1:1','2:1','3:1','4:0'],ans:2,dmg:50,exp:'Rr × Rr → RR(1):Rr(2):rr(1) ฟีโนไทป์เด่น:ด้อย = 3:1 ตามกฎการแยก (Law of Segregation) ของเมนเดล'},
+  {z:2,q:'ยีนด้อยแสดงออกเมื่อใด?',opts:['มีหนึ่งอัลลีล','มีสองอัลลีลด้อยเหมือนกัน (rr)','จับกับยีนเด่น','เสมอ'],ans:1,dmg:50,exp:'ยีนด้อยแสดงออกเฉพาะตอน Homozygous recessive (rr) หากมี R อยู่ด้วยจะถูกปิดบังโดยยีนเด่น'},
+  {z:2,q:'อะไรคือ "จีโนไทป์"?',opts:['ลักษณะที่ปรากฏภายนอก','รหัสพันธุกรรมที่แท้จริง','สีของเซลล์','ขนาดของยีน'],ans:1,dmg:48,exp:'จีโนไทป์คือรหัสพันธุกรรม (เช่น RR, Rr, rr) ส่วนฟีโนไทป์คือลักษณะที่เห็นจากภายนอก เช่น สีดอกไม้'},
+  {z:2,q:'RR × rr ให้ฟีโนไทป์รุ่นลูกอย่างไร?',opts:['เด่นทั้งหมด','ด้อยทั้งหมด','ครึ่งเด่นครึ่งด้อย','สุ่ม'],ans:0,dmg:52,exp:'RR × rr → Rr ทั้งหมด (100%) ฟีโนไทป์เด่นทั้งหมด เพราะ R เด่นกว่า r'},
+  {z:2,q:'กฎ Independent Assortment ของเมนเดลคืออะไร?',opts:['ยีนเด่นเสมอ','ยีนถ่ายทอดอิสระต่อกัน','ยีนเชื่อมกันเสมอ','ยีนเปลี่ยนแปลงเอง'],ans:1,dmg:54,exp:'กฎการรวมตัวอิสระ: ยีนในโครโมโซมต่างคู่กันถ่ายทอดอิสระต่อกัน ทำให้เกิดการรวมกันของลักษณะใหม่'},
+  {z:2,q:'ลักษณะที่ถ่ายทอดทาง X-linked recessive แสดงออกในใคร?',opts:['ผู้หญิงเท่านั้น','ผู้ชายเท่านั้น','ผู้ชายบ่อยกว่า','ผู้หญิงบ่อยกว่า'],ans:2,dmg:56,exp:'X-linked recessive เช่น โรคฮีโมฟีเลีย แสดงในผู้ชาย (XY) บ่อยกว่า เพราะผู้ชายมี X เพียงตัวเดียว'},
+  {z:2,q:'Codominance คืออะไร?',opts:['ยีนเด่นทับด้อย','ยีนทั้งสองแสดงออกพร้อมกัน','ยีนด้อยชนะ','ยีนไม่แสดงออก'],ans:1,dmg:55,exp:'Codominance คือยีนทั้งสองอัลลีลแสดงออกพร้อมกัน เช่น กรุ๊ปเลือด AB มีทั้ง A และ B แสดงออก'},
+  {z:2,q:'Incomplete dominance ต่างจาก dominance อย่างไร?',opts:['เหมือนกัน','ลูกผสมมีฟีโนไทป์กึ่งกลาง','ลูกผสมเหมือนพ่อเสมอ','ยีนด้อยหาย'],ans:1,dmg:54,exp:'Incomplete dominance: RR(แดง) × rr(ขาว) → Rr(ชมพู) ฟีโนไทป์กึ่งกลาง ต่างจาก complete dominance ที่ Rr = แดง'},
+  {z:2,q:'กรุ๊ปเลือด ABO ถ่ายทอดด้วยกฎใด?',opts:['กฎ Codominance เท่านั้น','Multiple alleles + Codominance','X-linked','Incomplete dominance'],ans:1,dmg:58,exp:'กรุ๊ปเลือด ABO มี 3 อัลลีล (Iᴬ, Iᴮ, i) และ Iᴬ กับ Iᴮ เป็น Codominance (AB) แต่ทั้งคู่เด่นกว่า i'},
+];
+
+// ══════════════════════════════════════════
+//  LEARN TIPS — รายละเอียดสำหรับปุ่มเรียนรู้
+// ══════════════════════════════════════════
+const LEARN_TIPS = {
+  0:[
+    {title:'โครงสร้าง DNA',tag:'พื้นฐาน',text:'DNA (Deoxyribonucleic Acid) เป็นโมเลกุลทวิสต์คู่ (Double Helix) ประกอบด้วยนิวคลีโอไทด์ที่มีน้ำตาลดีออกซีไรโบส, ฟอสเฟต และเบส 4 ชนิด คือ A, T, G, C'},
+    {title:'กฎการจับคู่เบส',tag:'Chargaff',text:'A จับกับ T (2 พันธะ H), G จับกับ C (3 พันธะ H) ตามกฎ Chargaff ซึ่งทำให้ปริมาณ A=T และ G=C เสมอ'},
+    {title:'Central Dogma',tag:'สำคัญมาก',text:'กฎหลักของชีววิทยาโมเลกุล: DNA → (Transcription) → mRNA → (Translation) → Protein เป็นทิศทางการไหลของข้อมูลพันธุกรรม'},
+    {title:'Replication กับ Transcription',tag:'เปรียบเทียบ',text:'Replication = คัดลอก DNA ทั้งหมด (ก่อนแบ่งเซลล์)\nTranscription = คัดลอกบางส่วนเป็น mRNA (เพื่อสร้างโปรตีน)'},
+    {title:'RNA 3 ชนิด',tag:'ประเภท',text:'mRNA (messenger) นำรหัสออกจากนิวเคลียส | tRNA (transfer) นำกรดอะมิโน | rRNA (ribosomal) เป็นส่วนประกอบของไรโบโซม'},
+  ],
+  1:[
+    {title:'โครโมโซมมนุษย์',tag:'ตัวเลข',text:'มนุษย์มี 46 แท่ง (23 คู่) — คู่ที่ 1-22 เป็น Autosome และคู่ที่ 23 เป็นโครโมโซมเพศ (XX หรือ XY)'},
+    {title:'Karyotype',tag:'การตรวจ',text:'Karyotype คือการถ่ายภาพและจัดเรียงโครโมโซม ใช้ตรวจความผิดปกติ เช่น Down syndrome (47,+21), Turner (45,X), Klinefelter (47,XXY)'},
+    {title:'Mitosis vs Meiosis',tag:'เปรียบเทียบ',text:'Mitosis: 2n→2n, ได้ 2 เซลล์เหมือนเดิม, ใช้เจริญเติบโต\nMeiosis: 2n→n, ได้ 4 เซลล์ครึ่งชุด, ใช้สร้างเซลล์สืบพันธุ์'},
+    {title:'ความผิดปกติโครโมโซม',tag:'โรค',text:'Down (Trisomy 21) | Patau (Trisomy 13) | Edwards (Trisomy 18) | Turner (45,X) | Klinefelter (47,XXY) | Triple X (47,XXX)'},
+    {title:'Crossing Over',tag:'ความหลากหลาย',text:'Crossing Over ใน Prophase I ของ Meiosis ทำให้โครโมโซมแลกเปลี่ยนชิ้นส่วนกัน สร้างความหลากหลายทางพันธุกรรมในลูกหลาน'},
+  ],
+  2:[
+    {title:'กฎเมนเดล 2 ข้อ',tag:'สำคัญ',text:'1. กฎการแยก (Segregation): อัลลีลแยกออกจากกันเมื่อสร้างเซลล์สืบพันธุ์\n2. กฎการรวมตัวอิสระ (Independent Assortment): ยีนต่างโครโมโซมถ่ายทอดอิสระ'},
+    {title:'Punnett Square',tag:'เครื่องมือ',text:'ตารางที่ใช้คำนวณอัตราส่วนจีโนไทป์และฟีโนไทป์ของลูก เช่น Rr×Rr → RR:Rr:rr = 1:2:1 และฟีโนไทป์เด่น:ด้อย = 3:1'},
+    {title:'X-linked Traits',tag:'เพศสัมพันธ์',text:'ลักษณะที่อยู่บนโครโมโซม X เช่น ตาบอดสี, ฮีโมฟีเลีย พบในผู้ชายบ่อยกว่า เพราะผู้ชายมี X เพียงตัวเดียว (Hemizygous)'},
+    {title:'กรุ๊ปเลือด ABO',tag:'ตัวอย่างจริง',text:'มี 3 อัลลีล: Iᴬ, Iᴮ (Codominant กัน), i (Recessive)\nกรุ๊ป A: IᴬIᴬ หรือ Iᴬi | B: IᴮIᴮ หรือ Iᴮi | AB: IᴬIᴮ | O: ii'},
+    {title:'Incomplete vs Codominance',tag:'เปรียบเทียบ',text:'Incomplete dominance: RR(แดง)×rr(ขาว)→Rr(ชมพู) ฟีโนไทป์กึ่งกลาง\nCodominance: IᴬIᴮ → มีทั้ง A และ B แสดงพร้อมกัน ไม่ผสมกัน'},
+  ],
+};
+
+// ══════════════════════════════════════════
+//  NO-REPEAT QUESTION SYSTEM
+// ══════════════════════════════════════════
+function shuffleArr(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function getNextQuestion(zone){
+  // Each zone uses ONLY its own questions — no cross-zone mixing
+  if(G.questionQueue[zone].length===0){
+    // Collect indices of questions belonging strictly to this zone
+    const zoneIndices = ALL_QUESTIONS
+      .map((q,i)=>({q,i}))
+      .filter(({q})=>q.z===zone)
+      .map(({i})=>i);
+    G.questionQueue[zone] = shuffleArr(zoneIndices);
+  }
+  const idx = G.questionQueue[zone].shift();
+  return ALL_QUESTIONS[idx];
+}
+
+// ══════════════════════════════════════════
+//  TITLE PARTICLES
+// ══════════════════════════════════════════
+function initParticles(){
+  const c=document.getElementById('particles');
+  const e=['🧬','🔬','⚗️','💊','🧫','🔭','⚡','🌀'];
+  for(let i=0;i<16;i++){
+    const p=document.createElement('div');
+    p.className='particle';p.textContent=e[i%e.length];
+    p.style.cssText=`left:${Math.random()*100}%;font-size:${0.7+Math.random()*1.1}rem;animation-duration:${7+Math.random()*8}s;animation-delay:${-Math.random()*8}s;`;
+    c.appendChild(p);
+  }
+}
+initParticles();
+
+// ══════════════════════════════════════════
+//  SCENE CANVAS
+// ══════════════════════════════════════════
+const ZONE_SCENES={
+  0:{color1:'#0a1628',color2:'#0d1f3c',pc:'cyan'},
+  1:{color1:'#1a0a28',color2:'#2d1050',pc:'purple'},
+  2:{color1:'#281a0a',color2:'#3d2810',pc:'yellow'},
+};
+let sceneT=0;
+function drawScene(){
+  const canvas=document.getElementById('sceneCanvas');
+  if(!canvas)return;
+  const w=canvas.offsetWidth,h=canvas.offsetHeight;
+  if(w===0||h===0){requestAnimationFrame(drawScene);return;}
+  canvas.width=w;canvas.height=h;
+  const ctx=canvas.getContext('2d');
+  const zs=ZONE_SCENES[G.zone]||ZONE_SCENES[0];
+  const grad=ctx.createLinearGradient(0,0,w,h);
+  grad.addColorStop(0,zs.color1);grad.addColorStop(1,zs.color2);
+  ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+  const cols={cyan:'rgba(0,229,255,',purple:'rgba(168,85,247,',yellow:'rgba(251,191,36,'};
+  const c=cols[zs.pc]||cols.cyan;
+  for(let i=0;i<25;i++){
+    const x=(Math.sin(sceneT*0.3+i*2.1)*0.5+0.5)*w;
+    const y=((sceneT*0.04+i*0.033)%1)*h;
+    const r=1+Math.sin(sceneT+i)*0.7;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=c+(0.25+Math.sin(sceneT+i)*0.2)+')';ctx.fill();
+  }
+  ctx.strokeStyle=c+'0.04)';ctx.lineWidth=1;
+  for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  sceneT+=0.5;
+  requestAnimationFrame(drawScene);
+}
+drawScene();
+
+// ══════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════
+function updateHUD(){
+  document.getElementById('hpBar').style.width=(G.hp/G.hpMax*100)+'%';
+  document.getElementById('hpVal').textContent=`${G.hp}/${G.hpMax}`;
+  document.getElementById('mpBar').style.width=(G.mp/G.mpMax*100)+'%';
+  document.getElementById('mpVal').textContent=`${G.mp}/${G.mpMax}`;
+  document.getElementById('xpBar').style.width=(G.xp/G.xpMax*100)+'%';
+  document.getElementById('xpVal').textContent=`${G.xp}/${G.xpMax}`;
+  document.getElementById('hudLv').textContent=`Lv.${G.lv}`;
+  document.getElementById('hudGold').textContent=`💰 ${G.gold}`;
+  document.getElementById('playerFighterHP').style.width=(G.hp/G.hpMax*100)+'%';
+}
+
+function addMsg(text,type='narrator'){
+  const box=document.getElementById('dialogueBox');
+  const div=document.createElement('div');
+  div.className=`msg ${type}`;div.innerHTML=text;
+  box.appendChild(div);box.scrollTop=box.scrollHeight;
+}
+function clearMsgs(){document.getElementById('dialogueBox').innerHTML='';}
+
+function setActions(actions){
+  const grid=document.getElementById('actionGrid');
+  grid.innerHTML=actions.map(a=>
+    `<button class="action-btn${a.danger?' danger':''}" onclick="${a.fn}" ${a.disabled?'disabled':''}>
+      <span>${a.icon}</span><span style="flex:1">${a.label}</span>${a.cost?`<span class="cost">${a.cost}MP</span>`:''}
+    </button>`
+  ).join('');
+}
+
+function showEnemy(e){
+  const ef=document.getElementById('enemyFighter');ef.style.display='flex';
+  document.getElementById('enemyName').textContent=e.name;
+  document.getElementById('enemySprite').textContent=e.sprite;
+  document.getElementById('enemyFighterHP').style.width='100%';
+}
+function hideEnemy(){document.getElementById('enemyFighter').style.display='none';}
+
+function updateEnemyHP(){
+  if(!G.enemy)return;
+  const pct=Math.max(0,G.enemy.hp/G.enemy.maxHp*100);
+  document.getElementById('enemyFighterHP').style.width=pct+'%';
+}
+
+function floatNum(text,color,targetId){
+  const el=document.createElement('div');
+  el.className='float-num';el.textContent=text;el.style.color=color;
+  const ref=document.getElementById(targetId||'enemyFighter');
+  const rect=ref.getBoundingClientRect();
+  el.style.left=(rect.left+rect.width/2-20)+'px';
+  el.style.top=(rect.top+20)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1200);
+}
+
+function updateSkillPanel(){
+  const list=document.getElementById('skillList');
+  if(!list)return;
+  list.innerHTML=Object.entries(SKILLS).map(([id,sk])=>{
+    const learned=G.skills.includes(id);
+    return `<div class="skill-item ${learned?'learned':'locked'}">
+      <span class="skill-icon">${sk.icon}</span>
+      <span class="skill-name">${sk.name}</span>
+      <span class="skill-badge ${learned?'badge-learned':'badge-locked'}">${learned?'✓':sk.lvReq?`Lv${sk.lvReq}`:'?'}</span>
+    </div>`;
+  }).join('');
+  const items=document.getElementById('itemList');
+  if(items)items.innerHTML=`
+    <div class="item-row">💊 ยาฟื้น HP <span class="item-count">×${G.items.potion}</span></div>
+    <div class="item-row">🧬 DNA Fragment <span class="item-count">×${G.items.dna_fragment}</span></div>
+  `;
+}
+
+// Mobile: map opens as overlay, desktop: side panel collapse
+function toggleMap(){
+  const p=document.getElementById('mapPanel');
+  const ov=document.getElementById('mapOverlay');
+  const isMobile=window.innerWidth<=600;
+  if(isMobile){
+    const open=p.classList.toggle('open');
+    ov.classList.toggle('show',open);
+  } else {
+    p.classList.toggle('collapsed');
+  }
+}
+
+function updateMapZones(){
+  const z1=document.getElementById('zone1El'),z2=document.getElementById('zone2El');
+  const l1=document.getElementById('zone1lock'),l2=document.getElementById('zone2lock');
+  if(G.lv>=2){z1.classList.remove('locked');if(l1)l1.textContent='';}
+  if(G.lv>=3){z2.classList.remove('locked');if(l2)l2.textContent='';}
+  document.querySelectorAll('.map-zone').forEach((z,i)=>z.classList.toggle('active',i===G.zone));
+}
+
+// ══════════════════════════════════════════
+//  QUIZ ENGINE
+// ══════════════════════════════════════════
+let quizTimeLeft=20;
+// Store current quiz state safely — no inline onclick string escaping
+let _quizState={newAns:0,exp:'',dmg:0};
+
+function openQuiz(onDone){
+  clearInterval(G.timerInterval);
+  const q=getNextQuestion(G.zone);
+  G.quizCallback=onDone;G.quizCorrect=false;
+  document.getElementById('quizQ').textContent=q.q;
+  const optsEl=document.getElementById('quizOpts');
+  // Shuffle answer options
+  const shuffledIdx=shuffleArr([0,1,2,3]);
+  const shuffledOpts=shuffledIdx.map(i=>q.opts[i]);
+  const newAns=shuffledIdx.indexOf(q.ans);
+  // Save to module-level state so event listeners can access safely
+  _quizState={newAns,exp:q.exp,dmg:q.dmg};
+  // Build buttons with data-index only — no string interpolation of user content
+  optsEl.innerHTML=shuffledOpts.map((o,i)=>
+    `<button class="qopt" data-idx="${i}">${o}</button>`
+  ).join('');
+  // Attach listeners cleanly — no escaping issues
+  optsEl.querySelectorAll('.qopt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const chosen=parseInt(btn.dataset.idx,10);
+      answerQuiz(chosen,_quizState.newAns,_quizState.exp,_quizState.dmg);
+    });
+  });
+  document.getElementById('quizResult').className='quiz-result';
+  document.getElementById('quizContinue').className='quiz-continue';
+  document.getElementById('quizModal').classList.remove('hidden');
+  quizTimeLeft=20;
+  document.getElementById('timerLabel').textContent='⏱ 20s';
+  document.getElementById('timerFill').style.width='100%';
+  G.timerInterval=setInterval(()=>{
+    quizTimeLeft--;
+    document.getElementById('timerLabel').textContent=`⏱ ${quizTimeLeft}s`;
+    document.getElementById('timerFill').style.width=(quizTimeLeft/20*100)+'%';
+    if(quizTimeLeft<=0){
+      clearInterval(G.timerInterval);
+      answerQuiz(-1,_quizState.newAns,_quizState.exp,_quizState.dmg);
+    }
+  },1000);
+}
+
+function answerQuiz(chosen,correct,exp,dmg){
+  clearInterval(G.timerInterval);
+  const opts=document.querySelectorAll('.qopt');
+  opts.forEach(o=>o.disabled=true);
+  if(opts[correct])opts[correct].classList.add('correct');
+  if(chosen!==correct&&chosen>=0&&opts[chosen])opts[chosen].classList.add('wrong');
+  G.quizCorrect=chosen===correct;
+  // Mark timeout so doQuizAttack can apply extra penalty
+  G.quizTimeout=(chosen===-1);
+  const res=document.getElementById('quizResult');
+  if(G.quizCorrect){
+    res.className='quiz-result show ok';
+    res.innerHTML=`✅ ถูกต้อง! +${dmg} ดาเมจ<br><small>${exp}</small>`;
+  } else if(G.quizTimeout){
+    res.className='quiz-result show no';
+    res.innerHTML=`⏰ หมดเวลา! ศัตรูโจมตีหนักมาก! ×2.5<br><small>${exp}</small>`;
+  } else {
+    res.className='quiz-result show no';
+    res.innerHTML=`❌ ผิด! ศัตรูโจมตีหนัก! ×1.8<br><small>${exp}</small>`;
+  }
+  document.getElementById('quizContinue').className='quiz-continue show';
+}
+
+function continueAfterQuiz(){
+  document.getElementById('quizModal').classList.add('hidden');
+  if(G.quizCallback)G.quizCallback(G.quizCorrect);
+}
+
+// ══════════════════════════════════════════
+//  LEARN MODAL
+// ══════════════════════════════════════════
+function openLearn(){
+  const tips=LEARN_TIPS[G.zone]||LEARN_TIPS[0];
+  const html=tips.map(t=>`
+    <div class="learn-card">
+      <span class="tag">${t.tag}</span>
+      <h4>${t.title}</h4>
+      <p>${t.text.replace(/\n/g,'<br>')}</p>
+    </div>
+  `).join('');
+  document.getElementById('learnCards').innerHTML=html;
+  document.getElementById('learnModal').classList.remove('hidden');
+  // MP regen bonus
+  G.mp=Math.min(G.mpMax,G.mp+5);
+  updateHUD();
+  addMsg('📚 MP +5 จากการเรียนรู้!','reward');
+}
+function closeLearn(){
+  document.getElementById('learnModal').classList.add('hidden');
+  if(G.inBattle)setBattleActions();else setZoneActions();
+}
+
+// ══════════════════════════════════════════
+//  BATTLE SYSTEM
+// ══════════════════════════════════════════
+function startBattle(enemy){
+  G.inBattle=true;G.enemy={...enemy};
+  showEnemy(G.enemy);clearMsgs();
+  addMsg(`⚔️ ${G.enemy.isBoss?'บอสปรากฏตัว!':'ศัตรูปรากฏ!'} <strong style="color:${G.enemy.color}">${G.enemy.name} ${G.enemy.sprite}</strong>`,'narrator');
+  if(G.enemy.isBoss)addMsg(`💀 "ฉันจะทำลายรหัสพันธุกรรมทั้งหมด! เจ้าไม่มีทางชนะ!"`, 'npc');
+  setBattleActions();
+}
+
+function setBattleActions(){
+  setActions([
+    {icon:'❓',label:'ตอบคำถาม',fn:'doQuizAttack()',cost:10,disabled:G.mp<10},
+    {icon:'🔍',label:'วิเคราะห์',fn:'doAnalyze()',cost:5,disabled:G.mp<5},
+    {icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0},
+    {icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true},
+  ]);
+}
+
+function doQuizAttack(){
+  if(G.mp<10)return;
+  G.mp=Math.max(0,G.mp-10);updateHUD();
+  openQuiz((correct)=>{
+    if(!G.inBattle)return;
+    if(correct){
+      const dmg=28+G.lv*8+Math.floor(Math.random()*10);
+      G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
+      floatNum(`-${dmg}`,'#f87171','enemyFighter');
+      addMsg(`💥 ตอบถูก! โจมตี <strong style="color:var(--red)">${dmg} ดาเมจ</strong>!`,'player');
+      if(G.enemy.hp<=0){winBattle();return;}
+      // Counter-attack after correct answer — stronger than before
+      setTimeout(()=>{
+        if(!G.inBattle||G.enemy.hp<=0)return;
+        const edm=Math.floor(G.enemy.atk*1.0+Math.random()*8);
+        G.hp=Math.max(0,G.hp-edm);updateHUD();
+        floatNum(`-${edm}`,'#22d3a0','playerFighter');
+        addMsg(`⚡ ${G.enemy.name} โต้กลับ <strong style="color:var(--red)">${edm} ดาเมจ</strong>!`,'damage');
+        if(G.hp<=0){loseGame();return;}
+        setBattleActions();
+      },800);
+    } else {
+      // Wrong answer 1.8×, timeout 2.5× — much more punishing
+      const mult = G.quizTimeout ? 2.5 : 1.8;
+      const dmg=Math.floor(G.enemy.atk*mult+Math.random()*12);
+      G.hp=Math.max(0,G.hp-dmg);updateHUD();
+      floatNum(`-${dmg}`,'#22d3a0','playerFighter');
+      const msg=G.quizTimeout
+        ? `⏰ หมดเวลา! ${G.enemy.name} โจมตีหนักมาก <strong style="color:var(--red)">${dmg} ดาเมจ</strong>! (×2.5)`
+        : `💢 ตอบผิด! ${G.enemy.name} โจมตีหนัก <strong style="color:var(--red)">${dmg} ดาเมจ</strong>! (×1.8)`;
+      addMsg(msg,'damage');
+      if(G.hp<=0){loseGame();return;}
+      setBattleActions();
+    }
+  });
+}
+
+function doAnalyze(){
+  if(G.mp<5)return;
+  G.mp=Math.max(0,G.mp-5);updateHUD();
+  const info=[
+    `HP ศัตรู: ${G.enemy.hp}/${G.enemy.maxHp} | ATK: ${G.enemy.atk}`,
+    `${G.enemy.name} อ่อนแอต่อคำถามพันธุศาสตร์มาก!`,
+    `วิเคราะห์แล้ว: ตอบถูกจะทำดาเมจสูง!`,
+  ];
+  addMsg(`🔍 ${info[Math.floor(Math.random()*info.length)]}`,'narrator');
+  G.mp=Math.min(G.mpMax,G.mp+3);updateHUD();
+  setBattleActions();
+}
+
+function usePotion(){
+  if(G.items.potion<=0)return;
+  G.items.potion--;
+  const heal=30+G.lv*5;
+  G.hp=Math.min(G.hpMax,G.hp+heal);updateHUD();
+  floatNum(`+${heal}`,'#22d3a0','playerFighter');
+  addMsg(`💊 ดื่มยา! ฟื้นฟู <strong style="color:var(--green)">${heal} HP</strong>`,'reward');
+  updateSkillPanel();
+  setTimeout(()=>{
+    if(!G.inBattle)return;
+    const edm=G.enemy.atk+Math.floor(Math.random()*6);
+    G.hp=Math.max(0,G.hp-edm);updateHUD();
+    addMsg(`⚡ ${G.enemy.name} โจมตีขณะดื่มยา ${edm} ดาเมจ!`,'damage');
+    if(G.hp<=0){loseGame();return;}
+    setBattleActions();
+  },600);
+}
+
+function doFlee(){
+  if(Math.random()<0.5){
+    G.inBattle=false;G.enemy=null;hideEnemy();
+    addMsg('🏃 หลบหนีสำเร็จ!','narrator');setZoneActions();
+  } else {
+    const dmg=G.enemy.atk;
+    G.hp=Math.max(0,G.hp-dmg);updateHUD();
+    addMsg(`❌ หลบหนีไม่สำเร็จ! โดนโจมตี ${dmg} ดาเมจ!`,'damage');
+    if(G.hp<=0){loseGame();return;}
+    setBattleActions();
+  }
+}
+
+function winBattle(){
+  G.inBattle=false;const e=G.enemy;G.enemy=null;hideEnemy();
+  G.xp+=e.xp;G.gold+=e.gold;G.items.dna_fragment++;
+  G.mp=Math.min(G.mpMax,G.mp+15);
+  addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
+  addMsg(`✨ XP +${e.xp} | 💰 +${e.gold} | 🧬 DNA Fragment +1`,'reward');
+  updateHUD();updateSkillPanel();checkLevelUp();
+  setTimeout(setZoneActions,600);
+}
+
+function loseGame(){
+  G.inBattle=false;hideEnemy();clearMsgs();
+  addMsg('💀 HP หมด! พ่ายแพ้...','damage');
+  addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง','narrator');
+  G.hp=Math.floor(G.hpMax*0.5);G.mp=Math.floor(G.mpMax*0.7);updateHUD();
+  setTimeout(setZoneActions,1000);
+}
+
+function checkLevelUp(){
+  while(G.xp>=G.xpMax){
+    G.xp-=G.xpMax;G.lv++;G.xpMax=Math.floor(G.xpMax*1.4);
+    G.hpMax+=20;G.hp=G.hpMax;G.mpMax+=10;G.mp=G.mpMax;
+    Object.entries(SKILLS).forEach(([id,sk])=>{
+      if(sk.lvReq&&G.lv>=sk.lvReq&&!G.skills.includes(id)){
+        G.skills.push(id);
+        addMsg(`⬆️ ทักษะใหม่: ${sk.icon} ${sk.name}!`,'reward');
+      }
+    });
+    // Reset question queues on level up so new zone questions become available
+    G.questionQueue={0:[],1:[],2:[]};
+    const banner=document.getElementById('lvBanner');
+    document.getElementById('lvBannerSub').textContent=`ขึ้นสู่ Level ${G.lv}! HP และ MP เพิ่มขึ้น!`;
+    banner.classList.add('show');
+    setTimeout(()=>banner.classList.remove('show'),2500);
+    updateMapZones();updateSkillPanel();
+  }
+}
+
+// ══════════════════════════════════════════
+//  ZONE / STORY SYSTEM
+// ══════════════════════════════════════════
+const ZONE_STORIES={
+  0:[
+    {type:'narrator',text:'📍 ยินดีต้อนรับสู่ <strong>ห้องสมุด DNA</strong> — ศูนย์กลางข้อมูลพันธุกรรมของ Bio-Sphere'},
+    {type:'npc',text:'🔬 ดร. เฮลิกซ์: "ไวรัสกลายพันธุ์บุกเข้ามาแล้ว! ใช้ความรู้ DNA เอาชนะพวกมัน!"'},
+    {type:'npc',text:'💡 "จำไว้: DNA = Double Helix, A-T, G-C และ Central Dogma: DNA→RNA→Protein"'},
+  ],
+  1:[
+    {type:'narrator',text:'📍 คุณเข้าสู่ <strong>ห้องแล็บโครโมโซม</strong> — โครโมโซมกำลังกลายพันธุ์!'},
+    {type:'npc',text:'🧬 ดร. คาริโอ: "มนุษย์มีโครโมโซม 46 แท่ง! ต้องหยุดการกลายพันธุ์ด่วน!"'},
+  ],
+  2:[
+    {type:'narrator',text:'📍 คุณมาถึง <strong>ป้อมเมนเดล</strong> — หัวใจของการถ่ายทอดพันธุกรรม!'},
+    {type:'npc',text:'💀 บอสเมนเดล: "ฮ่าๆ! เจ้าจะชนะฉันได้ก็ต่อเมื่อเข้าใจกฎพันธุกรรมอย่างแท้จริง!"'},
+  ],
+};
+
+function setZoneActions(){
+  const z=G.zone;
+  const canBattle=(ENEMIES[z]||[]).length>0;
+  setActions([
+    {icon:'⚔️',label:'ต่อสู้กับศัตรู',fn:'encounterEnemy()',disabled:!canBattle},
+    {icon:'📖',label:'เรียนรู้',fn:'openLearn()'},
+    {icon:'💊',label:'ซื้อยา (20💰)',fn:'buyPotion()'},
+    {icon:'➡️',label:'โซนถัดไป',fn:'nextZone()',disabled:z>=2},
+  ]);
+}
+
+function encounterEnemy(){
+  const pool=ENEMIES[G.zone]||ENEMIES[0];
+  startBattle({...pool[Math.floor(Math.random()*pool.length)]});
+}
+
+function buyPotion(){
+  if(G.gold<20){addMsg(`💰 Gold ไม่พอ! ต้องการ 20💰 (มี ${G.gold}💰)`,'damage');return;}
+  G.gold-=20;G.items.potion++;
+  addMsg(`💊 ซื้อยาสำเร็จ! (มี ${G.items.potion} ชิ้น)`,'reward');
+  updateHUD();updateSkillPanel();
+}
+
+function nextZone(){
+  const next=G.zone+1;
+  if(next===1&&G.lv<2){addMsg('🔒 ต้องการ Lv.2 ก่อน! สู้ศัตรูเพิ่มเพื่อเก็บ XP','damage');return;}
+  if(next===2&&G.lv<3){addMsg('🔒 ต้องการ Lv.3 ก่อน! สู้ศัตรูเพิ่มเพื่อเก็บ XP','damage');return;}
+  goZone(next);
+}
+
+function goZone(idx){
+  if(idx===1&&G.lv<2){addMsg('🔒 ต้องการ Lv.2 ก่อน!','damage');return;}
+  if(idx===2&&G.lv<3){addMsg('🔒 ต้องการ Lv.3 ก่อน!','damage');return;}
+  if(idx>=3){addMsg('🔒 ยังไม่เปิด (Lv.5 ขึ้นไป)','damage');return;}
+  G.zone=idx;G.inBattle=false;G.enemy=null;hideEnemy();clearMsgs();
+  // Close map on mobile after navigating
+  const p=document.getElementById('mapPanel'),ov=document.getElementById('mapOverlay');
+  if(window.innerWidth<=600){p.classList.remove('open');ov.classList.remove('show');}
+  updateMapZones();
+  const story=ZONE_STORIES[idx]||[];
+  story.forEach((s,i)=>setTimeout(()=>addMsg(s.text,s.type),i*400));
+  setTimeout(setZoneActions,story.length*400+200);
+}
+
+// ══════════════════════════════════════════
+//  START GAME
+// ══════════════════════════════════════════
+function startGame(){
+  document.getElementById('titleScreen').classList.remove('active');
+  document.getElementById('gameScreen').classList.add('active');
+  updateHUD();updateSkillPanel();updateMapZones();goZone(0);
+}
+
+// Handle resize (desktop ↔ mobile)
+window.addEventListener('resize',()=>{
+  const p=document.getElementById('mapPanel'),ov=document.getElementById('mapOverlay');
+  if(window.innerWidth>600){
+    p.classList.remove('open');ov.classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>
