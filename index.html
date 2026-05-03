@@ -1059,6 +1059,7 @@ function doMutationRay(){
   if(G.mp<20)return;G.mp=Math.max(0,G.mp-20);updateHUD();
   const dmg=50+G.lv*10+Math.floor(Math.random()*20);
   G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
+  playBossAnim('hit');
   floatNum(`-${dmg}`,'#f87171','enemyFighter');
   addMsg(`☢️ รังสีมิวเทชัน! ดาเมจ <strong style="color:var(--red)">${dmg}</strong>!`,'player');
   if(G.enemy.hp<=0){winBattle();return;}setBattleActions();
@@ -1067,6 +1068,7 @@ function doGenomeBlast(){
   if(G.mp<25)return;G.mp=Math.max(0,G.mp-25);updateHUD();
   const dmg=80+G.lv*15+Math.floor(Math.random()*25);
   G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
+  playBossAnim('hit');
   floatNum(`-${dmg}`,'#fbbf24','enemyFighter');
   addMsg(`💥 จีโนมบลาสต์! ดาเมจ <strong style="color:var(--yellow)">${dmg}</strong>! ✨`,'player');
   if(G.enemy.hp<=0){winBattle();return;}
