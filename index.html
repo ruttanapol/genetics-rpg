@@ -34,57 +34,30 @@ body{
     radial-gradient(ellipse at 10% 20%,rgba(168,85,247,0.06) 0%,transparent 50%),
     radial-gradient(ellipse at 90% 80%,rgba(0,229,255,0.05) 0%,transparent 50%);
 }
-
-/* ══════ SCREENS ══════ */
 .screen{display:none;width:100%;height:100%;}
 .screen.active{display:flex;}
 
-/* ══════ TITLE ══════ */
+/* TITLE */
 #titleScreen{
   flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;gap:0;position:relative;overflow:hidden;
-  padding:20px;
+  text-align:center;gap:0;position:relative;overflow:hidden;padding:20px;
 }
 .title-particles{position:absolute;inset:0;pointer-events:none;}
 .particle{position:absolute;border-radius:50%;animation:floatP linear infinite;opacity:0.4;}
-@keyframes floatP{
-  0%{transform:translateY(100vh) rotate(0deg);opacity:0;}
-  10%{opacity:0.4;}90%{opacity:0.4;}
-  100%{transform:translateY(-100px) rotate(720deg);opacity:0;}
-}
+@keyframes floatP{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.4;}90%{opacity:0.4;}100%{transform:translateY(-100px) rotate(720deg);opacity:0;}}
 .title-dna{font-size:clamp(3rem,10vw,5rem);margin-bottom:8px;animation:dnaRotate 3s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(0,229,255,0.5));}
 @keyframes dnaRotate{0%,100%{transform:scale(1) rotate(-3deg);}50%{transform:scale(1.08) rotate(3deg);}}
-.title-game{
-  font-family:'Prompt',sans-serif;font-size:clamp(1.8rem,7vw,4rem);font-weight:900;
-  background:linear-gradient(135deg,var(--cyan),var(--purple),var(--green));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:6px;letter-spacing:-1px;
-}
+.title-game{font-family:'Prompt',sans-serif;font-size:clamp(1.8rem,7vw,4rem);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;letter-spacing:-1px;}
 .title-sub{color:var(--dim);font-size:clamp(0.75rem,2.5vw,1rem);margin-bottom:20px;letter-spacing:2px;text-transform:uppercase;}
 .title-story{max-width:520px;color:#94a3b8;font-size:clamp(0.8rem,2.8vw,0.95rem);line-height:1.8;margin-bottom:28px;padding:0 10px;}
 .title-story strong{color:var(--cyan);}
-.btn-start{
-  padding:14px 44px;border-radius:50px;
-  background:linear-gradient(135deg,var(--cyan),var(--purple));
-  color:#fff;font-size:clamp(0.95rem,3vw,1.1rem);font-weight:700;
-  border:none;cursor:pointer;font-family:'Prompt',sans-serif;
-  box-shadow:0 0 40px rgba(0,229,255,0.3);
-  transition:all 0.3s;letter-spacing:1px;animation:pulse-btn 2s infinite;
-}
+.btn-start{padding:14px 44px;border-radius:50px;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;font-size:clamp(0.95rem,3vw,1.1rem);font-weight:700;border:none;cursor:pointer;font-family:'Prompt',sans-serif;box-shadow:0 0 40px rgba(0,229,255,0.3);transition:all 0.3s;letter-spacing:1px;animation:pulse-btn 2s infinite;}
 @keyframes pulse-btn{0%,100%{box-shadow:0 0 40px rgba(0,229,255,0.3);}50%{box-shadow:0 0 60px rgba(168,85,247,0.5);}}
 .btn-start:hover{transform:translateY(-3px) scale(1.04);}
 
-/* ══════ GAME SCREEN ══════ */
+/* GAME SCREEN */
 #gameScreen{flex-direction:column;height:100vh;overflow:hidden;}
-
-/* HUD */
-.hud{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 10px;
-  background:var(--panel);
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
+.hud{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
 .hud-avatar{font-size:1.4rem;flex-shrink:0;}
 .hud-center{display:flex;flex-direction:column;flex:1;min-width:0;gap:3px;}
 .hud-name{font-family:'Prompt',sans-serif;font-size:0.75rem;font-weight:700;color:var(--cyan);line-height:1;}
@@ -101,24 +74,13 @@ body{
 .stat-lv{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3);color:var(--purple);}
 .hud-map-btn{padding:4px 10px;border-radius:8px;background:rgba(0,229,255,0.1);border:1px solid var(--border);color:var(--cyan);font-size:0.68rem;cursor:pointer;font-family:'Sarabun',sans-serif;transition:all 0.2s;white-space:nowrap;}
 .hud-map-btn:hover{background:rgba(0,229,255,0.2);}
-
-/* GAME MAIN */
 .game-main{display:flex;flex:1;overflow:hidden;min-height:0;}
 
-/* MAP PANEL */
-.map-panel{
-  width:180px;flex-shrink:0;background:var(--panel);
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;overflow-y:auto;
-  transition:width 0.3s ease;
-}
+/* MAP */
+.map-panel{width:190px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;transition:width 0.3s ease;}
 .map-panel.collapsed{width:0;overflow:hidden;}
 @media(max-width:600px){
-  .map-panel{
-    position:fixed;top:0;left:0;bottom:0;z-index:150;
-    width:200px;transform:translateX(-100%);transition:transform 0.3s ease;
-    box-shadow:4px 0 20px rgba(0,0,0,0.5);
-  }
+  .map-panel{position:fixed;top:0;left:0;bottom:0;z-index:150;width:210px;transform:translateX(-100%);transition:transform 0.3s ease;box-shadow:4px 0 20px rgba(0,0,0,0.5);}
   .map-panel.open{transform:translateX(0);}
 }
 .map-title{padding:10px 12px;font-size:0.68rem;font-weight:700;color:var(--dim);letter-spacing:1px;border-bottom:1px solid var(--border);}
@@ -134,13 +96,7 @@ body{
 
 /* ADVENTURE */
 .adventure{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
-
-/* SCENE */
-.scene{
-  position:relative;
-  height:clamp(120px,25vw,180px);flex-shrink:0;
-  overflow:hidden;display:flex;align-items:center;justify-content:center;
-}
+.scene{position:relative;height:clamp(120px,25vw,180px);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
 .scene-canvas{width:100%;height:100%;display:block;}
 .scene-overlay{position:absolute;inset:0;background:linear-gradient(0deg,var(--panel) 0%,transparent 50%);pointer-events:none;}
 .battle-area{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-between;padding:8px 24px;}
@@ -153,8 +109,6 @@ body{
 .fighter-hp-bar{width:70px;height:5px;background:rgba(255,255,255,0.1);border-radius:50px;overflow:hidden;}
 .fighter-hp-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,#22d3a0,#00e5ff);transition:width 0.5s ease;}
 .enemy .fighter-hp-fill{background:linear-gradient(90deg,#f87171,#fb923c);}
-
-/* DIALOGUE */
 .dialogue-box{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:5px;min-height:0;}
 .msg{padding:7px 12px;border-radius:12px;font-size:clamp(0.76rem,2.5vw,0.84rem);line-height:1.6;max-width:92%;animation:msgIn 0.3s ease;}
 @keyframes msgIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
@@ -163,17 +117,9 @@ body{
 .msg.player{background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);color:var(--text);align-self:flex-end;}
 .msg.reward{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);color:var(--yellow);align-self:center;text-align:center;}
 .msg.damage{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);color:var(--red);align-self:center;text-align:center;}
-
-/* ACTIONS */
 .action-area{padding:8px 10px;background:var(--panel);border-top:1px solid var(--border);flex-shrink:0;}
 .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.action-btn{
-  padding:8px 10px;border-radius:10px;
-  background:var(--panel2);border:1px solid var(--border);
-  color:var(--text);cursor:pointer;font-size:clamp(0.72rem,2.5vw,0.78rem);font-weight:600;
-  font-family:'Sarabun',sans-serif;text-align:left;transition:all 0.2s;
-  display:flex;align-items:center;gap:5px;min-height:42px;
-}
+.action-btn{padding:8px 10px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--text);cursor:pointer;font-size:clamp(0.72rem,2.5vw,0.78rem);font-weight:600;font-family:'Sarabun',sans-serif;text-align:left;transition:all 0.2s;display:flex;align-items:center;gap:5px;min-height:42px;}
 .action-btn:hover:not(:disabled){border-color:var(--cyan);background:rgba(0,229,255,0.07);transform:translateY(-1px);}
 .action-btn:active:not(:disabled){transform:scale(0.97);}
 .action-btn:disabled{opacity:0.4;cursor:not-allowed;}
@@ -181,12 +127,8 @@ body{
 .action-btn.danger{border-color:rgba(248,113,113,0.3);}
 .action-btn.danger:hover:not(:disabled){background:rgba(248,113,113,0.07);border-color:var(--red);}
 
-/* RIGHT PANEL — hidden on small mobile, shown as bottom sheet toggle */
-.right-panel{
-  width:175px;flex-shrink:0;background:var(--panel);
-  border-left:1px solid var(--border);
-  display:flex;flex-direction:column;overflow-y:auto;
-}
+/* RIGHT PANEL */
+.right-panel{width:175px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
 @media(max-width:700px){.right-panel{display:none;}}
 .rp-section{padding:10px 10px;border-bottom:1px solid var(--border);}
 .rp-title{font-size:0.62rem;color:var(--dim);font-weight:700;letter-spacing:1px;margin-bottom:7px;}
@@ -242,27 +184,26 @@ body{
 .levelup-title{font-family:'Prompt',sans-serif;font-size:clamp(1.4rem,6vw,2rem);font-weight:900;color:var(--yellow);margin-bottom:6px;}
 .levelup-sub{color:var(--dim);font-size:clamp(0.8rem,2.5vw,0.9rem);}
 
+/* VICTORY SCREEN */
+.victory-screen{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;}
+.victory-screen.hidden{display:none;}
+.victory-title{font-family:'Prompt',sans-serif;font-size:clamp(2rem,8vw,3.5rem);font-weight:900;background:linear-gradient(135deg,var(--yellow),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.victory-sub{font-size:clamp(0.9rem,3vw,1.1rem);color:#94a3b8;line-height:1.8;max-width:480px;margin-bottom:30px;}
+.victory-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:30px;max-width:400px;width:100%;}
+.vstat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;}
+.vstat-val{font-family:'Prompt',sans-serif;font-size:1.4rem;font-weight:900;color:var(--cyan);}
+.vstat-lbl{font-size:0.7rem;color:var(--dim);}
+
 /* MAP OVERLAY for mobile */
 .map-overlay{display:none;position:fixed;inset:0;z-index:140;background:rgba(0,0,0,0.5);}
 @media(max-width:600px){.map-overlay.show{display:block;}}
 
 /* DROP POPUP */
-.drop-popup{
-  position:fixed;left:50%;transform:translateX(-50%) scale(0);
-  z-index:450;text-align:center;
-  background:var(--panel);border:2px solid var(--yellow);
-  border-radius:18px;padding:20px 36px;
-  box-shadow:0 0 50px rgba(251,191,36,0.4);
-  transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);
-  pointer-events:none;
-}
+.drop-popup{position:fixed;left:50%;transform:translateX(-50%) scale(0);z-index:450;text-align:center;background:var(--panel);border:2px solid var(--yellow);border-radius:18px;padding:20px 36px;box-shadow:0 0 50px rgba(251,191,36,0.4);transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .drop-popup.show{transform:translateX(-50%) scale(1);}
 .drop-title{font-family:'Prompt',sans-serif;font-size:1.1rem;font-weight:900;color:var(--yellow);margin-bottom:4px;}
 .drop-body{font-size:0.88rem;color:var(--text);}
-.drop-star{font-size:1.8rem;animation:spinStar 0.8s ease;}
-@keyframes spinStar{0%{transform:rotate(0) scale(0);}60%{transform:rotate(380deg) scale(1.3);}100%{transform:rotate(360deg) scale(1);}}
 
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(100,200,255,0.2);border-radius:2px;}
@@ -275,22 +216,23 @@ body{
   <div class="title-particles" id="particles"></div>
   <div class="title-dna">🧬</div>
   <div class="title-game">DNA QUEST</div>
-  <div class="title-sub">ผจญภัยพันธุศาสตร์</div>
+  <div class="title-sub">ผจญภัยพันธุศาสตร์ — Gr.9 Edition</div>
   <div class="title-story">
     โลก <strong>Bio-Sphere</strong> กำลังพังทลาย — ไวรัสกลายพันธุ์ได้บุกรุกเข้าไปใน
     <strong>ห้องสมุด DNA</strong> และกำลังทำลายข้อมูลพันธุกรรมทั้งหมด!<br><br>
-    คุณคือ <strong>นักวิทยาศาสตร์รุ่นใหม่</strong> ที่ต้องออกผจญภัย
+    คุณคือ <strong>นักวิทยาศาสตร์รุ่นใหม่</strong> ที่ต้องออกผจญภัยใน 4 โซน
     ตอบคำถามพันธุศาสตร์เพื่อเอาชนะศัตรู และกอบกู้รหัส DNA ให้กลับคืนมา!
   </div>
   <button class="btn-start" onclick="startGame()">⚔️ เริ่มผจญภัย</button>
   <div style="margin-top:24px;font-size:0.75rem;color:#475569;letter-spacing:1.5px;text-transform:uppercase;">
     Created by <span style="color:var(--cyan);font-weight:700;letter-spacing:2px;">Kru Rattanapol</span>
+    <span style="color:#334155;margin:0 8px;">|</span>
+    <span style="color:#64748b;">v2.0 — 55 Questions · 4 Zones</span>
   </div>
 </div>
 
 <!-- GAME SCREEN -->
 <div id="gameScreen" class="screen">
-
   <!-- HUD -->
   <div class="hud">
     <div class="hud-avatar" id="hudAvatar">🧑‍🔬</div>
@@ -329,7 +271,6 @@ body{
   <div class="map-overlay" id="mapOverlay" onclick="toggleMap()"></div>
 
   <div class="game-main">
-
     <!-- MAP -->
     <div class="map-panel" id="mapPanel">
       <div class="map-title">🗺️ แผนที่ Bio-Sphere</div>
@@ -347,10 +288,10 @@ body{
         <div class="zone-info"><div class="zone-name">ป้อมเมนเดล</div><div class="zone-sub">Lv.3 ขึ้นไป</div></div>
         <div class="zone-lock" id="zone2lock">🔒</div>
       </div>
-      <div class="map-zone locked" id="zone3El">
+      <div class="map-zone locked" id="zone3El" onclick="goZone(3)">
         <div class="zone-icon">💀</div>
         <div class="zone-info"><div class="zone-name">แดนมืด Mutation</div><div class="zone-sub">Lv.5 ขึ้นไป</div></div>
-        <div class="zone-lock">🔒</div>
+        <div class="zone-lock" id="zone3lock">🔒</div>
       </div>
     </div>
 
@@ -388,6 +329,10 @@ body{
         <div class="rp-title">🎒 ไอเทม</div>
         <div id="itemList"></div>
       </div>
+      <div class="rp-section">
+        <div class="rp-title">📊 สถิติ</div>
+        <div id="statList"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -397,7 +342,7 @@ body{
   <div class="quiz-modal">
     <h3 id="qTitle">⚔️ คำถามพันธุศาสตร์</h3>
     <div class="quiz-timer">
-      <span id="timerLabel">⏱ 20s</span>
+      <span id="timerLabel">⏱ 25s</span>
       <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
     </div>
     <div class="quiz-q" id="quizQ"></div>
@@ -422,186 +367,87 @@ body{
   <div class="levelup-sub" id="lvBannerSub">คุณขึ้นเลเวล!</div>
 </div>
 
+<!-- VICTORY SCREEN -->
+<div class="victory-screen hidden" id="victoryScreen">
+  <div style="font-size:4rem;margin-bottom:10px;">🏆</div>
+  <div class="victory-title">ภารกิจสำเร็จ!</div>
+  <div class="victory-sub">คุณเอาชนะ <strong style="color:var(--red)">บอสสูงสุด — จักรพรรดิ์ Mutation</strong> ได้แล้ว!<br>รหัส DNA ของ Bio-Sphere ได้รับการกอบกู้กลับคืนมาสำเร็จ! 🧬✨</div>
+  <div class="victory-stats" id="victoryStats"></div>
+  <button class="btn-start" onclick="restartGame()" style="animation:none;">🔄 เล่นใหม่</button>
+</div>
+
 <script>
-// ══════════════════════════════════════════
-//  GAME STATE
-// ══════════════════════════════════════════
 const G = {
   name:'นักวิทยาศาสตร์',lv:1,xp:0,xpMax:100,
   hp:100,hpMax:100,mp:50,mpMax:50,gold:0,
   zone:0,skills:['analyze','quiz_attack'],
-  items:{potion:2,dna_fragment:0},
+  items:{potion:2,dna_fragment:0,antidote:0},
   inBattle:false,enemy:null,
   quizCallback:null,quizCorrect:false,quizTimeout:false,
   timerInterval:null,
-  questionQueue:{0:[],1:[],2:[]},
+  questionQueue:{0:[],1:[],2:[],3:[]},
   musicOn:true,
+  totalCorrect:0,totalWrong:0,battlesWon:0,
+  gameCleared:false,
 };
 
 // ══════════════════════════════════════════
-//  WEB AUDIO — PROCEDURAL BGM + SFX
+//  WEB AUDIO
 // ══════════════════════════════════════════
-let _ac=null,_masterGain=null,_bgmNodes=[],_bgmTimeout=null;
+let _ac=null,_masterGain=null,_bgmNodes=[];
 const BGM={
-  0:{ // zone 0 — calm sci-fi ambient
-    bpm:90,
-    melody:[
-      [261,0.4],[293,0.4],[329,0.8],[293,0.4],[261,0.4],[220,0.8],
-      [246,0.4],[261,0.4],[293,0.4],[329,0.8],[349,0.4],[329,1.2],
-    ],
-    bass:[196,220,164,196],
-    pad:[130,164,196,220],
-  },
-  1:{ // zone 1 — tense lab
-    bpm:112,
-    melody:[
-      [349,0.3],[329,0.3],[311,0.6],[293,0.3],[329,0.3],[349,0.6],
-      [392,0.3],[370,0.3],[349,0.6],[329,0.3],[311,0.6],[293,1.2],
-    ],
-    bass:[196,175,196,233],
-    pad:[155,175,196,233],
-  },
-  2:{ // zone 2 — epic boss
-    bpm:132,
-    melody:[
-      [392,0.25],[440,0.25],[466,0.5],[440,0.25],[392,0.25],[349,0.5],
-      [392,0.25],[329,0.25],[349,0.5],[293,0.25],[311,0.25],[329,1.0],
-    ],
-    bass:[196,220,175,196],
-    pad:[196,220,261,233],
-  },
+  0:{bpm:90,melody:[[261,0.4],[293,0.4],[329,0.8],[293,0.4],[261,0.4],[220,0.8],[246,0.4],[261,0.4],[293,0.4],[329,0.8],[349,0.4],[329,1.2]],bass:[196,220,164,196],pad:[130,164,196,220]},
+  1:{bpm:112,melody:[[349,0.3],[329,0.3],[311,0.6],[293,0.3],[329,0.3],[349,0.6],[392,0.3],[370,0.3],[349,0.6],[329,0.3],[311,0.6],[293,1.2]],bass:[196,175,196,233],pad:[155,175,196,233]},
+  2:{bpm:132,melody:[[392,0.25],[440,0.25],[466,0.5],[440,0.25],[392,0.25],[349,0.5],[392,0.25],[329,0.25],[349,0.5],[293,0.25],[311,0.25],[329,1.0]],bass:[196,220,175,196],pad:[196,220,261,233]},
+  3:{bpm:148,melody:[[466,0.2],[440,0.2],[392,0.4],[440,0.2],[466,0.2],[523,0.4],[494,0.2],[466,0.2],[440,0.4],[392,0.2],[370,0.2],[349,0.8]],bass:[155,175,196,155],pad:[155,196,233,175]},
 };
-
-function getAC(){
-  if(!_ac){_ac=new(window.AudioContext||window.webkitAudioContext)();_masterGain=_ac.createGain();_masterGain.gain.value=0.28;_masterGain.connect(_ac.destination);}
-  return _ac;
-}
-
-function makeSynth(type,freq,duration,vol,detune=0,delay=0){
-  try{
-    const ac=getAC(),now=ac.currentTime+delay;
-    const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();
-    osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;
-    f.type='lowpass';f.frequency.value=1800;
-    g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);
-    g.gain.exponentialRampToValueAtTime(0.001,now+duration);
-    osc.connect(f);f.connect(g);g.connect(_masterGain);
-    osc.start(now);osc.stop(now+duration+0.05);
-  }catch(e){}
-}
-
-function playBGM(zone){
-  stopBGM();
-  if(!G.musicOn)return;
-  const ac=getAC();if(ac.state==='suspended')ac.resume();
-  const data=BGM[zone]||BGM[0];
-  const beat=60/data.bpm;
-
-  function loopMelody(startTime,idx){
-    if(!G.musicOn)return;
-    const note=data.melody[idx%data.melody.length];
-    makeSynth('triangle',note[0],note[1]*beat*0.85,0.18,0,startTime-ac.currentTime);
-    // harmony a 5th up
-    makeSynth('sine',note[0]*1.5,note[1]*beat*0.7,0.06,0,startTime-ac.currentTime);
-    const next=startTime+note[1]*beat;
-    const t=_bgmTimeout=setTimeout(()=>loopMelody(next,idx+1),(next-ac.currentTime)*1000-40);
-    _bgmNodes.push(t);
-  }
-
-  function loopBass(startTime,idx){
-    if(!G.musicOn)return;
-    const freq=data.bass[idx%data.bass.length];
-    makeSynth('sawtooth',freq,beat*1.8,0.12,-10,startTime-ac.currentTime);
-    const next=startTime+beat*2;
-    const t=setTimeout(()=>loopBass(next,idx+1),(next-ac.currentTime)*1000-40);
-    _bgmNodes.push(t);
-  }
-
-  function loopPad(startTime,idx){
-    if(!G.musicOn)return;
-    const freq=data.pad[idx%data.pad.length];
-    makeSynth('sine',freq,beat*3.8,0.08,0,startTime-ac.currentTime);
-    const next=startTime+beat*4;
-    const t=setTimeout(()=>loopPad(next,idx+1),(next-ac.currentTime)*1000-40);
-    _bgmNodes.push(t);
-  }
-
-  const now=ac.currentTime+0.05;
-  loopMelody(now,0);loopBass(now,0);loopPad(now,0);
-}
-
-function stopBGM(){
-  _bgmNodes.forEach(t=>clearTimeout(t));_bgmNodes=[];
-}
-
-function toggleMusic(){
-  G.musicOn=!G.musicOn;
-  const btn=document.getElementById('musicBtn');
-  if(G.musicOn){playBGM(G.zone);if(btn)btn.textContent='🔊';}
-  else{stopBGM();if(btn)btn.textContent='🔇';}
-}
-
-// SFX
-function sfxCorrect(){
-  try{
-    [523,659,784,1047].forEach((f,i)=>makeSynth('triangle',f,0.15,0.22,0,i*0.07));
-  }catch(e){}
-}
-function sfxWrong(){
-  try{
-    [220,196,174].forEach((f,i)=>makeSynth('sawtooth',f,0.2,0.18,0,i*0.08));
-  }catch(e){}
-}
-function sfxLevelUp(){
-  try{
-    [523,659,784,1047,1319].forEach((f,i)=>makeSynth('triangle',f,0.25,0.25,0,i*0.09));
-  }catch(e){}
-}
-function sfxDrop(){
-  try{
-    [784,880,1047,784].forEach((f,i)=>makeSynth('sine',f,0.18,0.28,0,i*0.06));
-  }catch(e){}
-}
-function sfxHit(){
-  try{
-    makeSynth('sawtooth',110,0.12,0.3,0,0);
-    makeSynth('sawtooth',82,0.18,0.2,0,0.05);
-  }catch(e){}
-}
-function sfxVictory(){
-  try{
-    [523,659,784,659,784,1047].forEach((f,i)=>makeSynth('triangle',f,0.22,0.24,0,i*0.1));
-  }catch(e){}
-}
-
+function getAC(){if(!_ac){_ac=new(window.AudioContext||window.webkitAudioContext)();_masterGain=_ac.createGain();_masterGain.gain.value=0.28;_masterGain.connect(_ac.destination);}return _ac;}
+function makeSynth(type,freq,duration,vol,detune=0,delay=0){try{const ac=getAC(),now=ac.currentTime+delay;const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);g.gain.exponentialRampToValueAtTime(0.001,now+duration);osc.connect(f);f.connect(g);g.connect(_masterGain);osc.start(now);osc.stop(now+duration+0.05);}catch(e){}}
+function playBGM(zone){stopBGM();if(!G.musicOn)return;const ac=getAC();if(ac.state==='suspended')ac.resume();const data=BGM[zone]||BGM[0];const beat=60/data.bpm;function loopMelody(st,idx){if(!G.musicOn)return;const note=data.melody[idx%data.melody.length];makeSynth('triangle',note[0],note[1]*beat*0.85,0.18,0,st-ac.currentTime);makeSynth('sine',note[0]*1.5,note[1]*beat*0.7,0.06,0,st-ac.currentTime);const next=st+note[1]*beat;const t=setTimeout(()=>loopMelody(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}function loopBass(st,idx){if(!G.musicOn)return;const freq=data.bass[idx%data.bass.length];makeSynth('sawtooth',freq,beat*1.8,0.12,-10,st-ac.currentTime);const next=st+beat*2;const t=setTimeout(()=>loopBass(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}function loopPad(st,idx){if(!G.musicOn)return;const freq=data.pad[idx%data.pad.length];makeSynth('sine',freq,beat*3.8,0.08,0,st-ac.currentTime);const next=st+beat*4;const t=setTimeout(()=>loopPad(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}const now=ac.currentTime+0.05;loopMelody(now,0);loopBass(now,0);loopPad(now,0);}
+function stopBGM(){_bgmNodes.forEach(t=>clearTimeout(t));_bgmNodes=[];}
+function toggleMusic(){G.musicOn=!G.musicOn;const btn=document.getElementById('musicBtn');if(G.musicOn){playBGM(G.zone);if(btn)btn.textContent='🔊';}else{stopBGM();if(btn)btn.textContent='🔇';}}
+function sfxCorrect(){try{[523,659,784,1047].forEach((f,i)=>makeSynth('triangle',f,0.15,0.22,0,i*0.07));}catch(e){}}
+function sfxWrong(){try{[220,196,174].forEach((f,i)=>makeSynth('sawtooth',f,0.2,0.18,0,i*0.08));}catch(e){}}
+function sfxLevelUp(){try{[523,659,784,1047,1319].forEach((f,i)=>makeSynth('triangle',f,0.25,0.25,0,i*0.09));}catch(e){}}
+function sfxHit(){try{makeSynth('sawtooth',110,0.12,0.3,0,0);makeSynth('sawtooth',82,0.18,0.2,0,0.05);}catch(e){}}
+function sfxVictory(){try{[523,659,784,659,784,1047,1319].forEach((f,i)=>makeSynth('triangle',f,0.25,0.28,0,i*0.1));}catch(e){}}
 
 const SKILLS = {
-  analyze:     {name:'วิเคราะห์ DNA',icon:'🔍',cost:5,learned:true},
-  quiz_attack: {name:'ตอบคำถาม!',icon:'❓',cost:10,learned:true},
-  gene_shield: {name:'โล่จีน',icon:'🛡️',cost:15,learned:false,lvReq:2},
-  mutation_ray:{name:'รังสีมิวเทชัน',icon:'☢️',cost:20,learned:false,lvReq:3},
-  rna_heal:    {name:'RNA รักษา',icon:'💊',cost:12,learned:false,lvReq:2},
+  analyze:      {name:'วิเคราะห์ DNA',icon:'🔍',cost:5,learned:true},
+  quiz_attack:  {name:'ตอบคำถาม!',icon:'❓',cost:10,learned:true},
+  gene_shield:  {name:'โล่จีน',icon:'🛡️',cost:15,learned:false,lvReq:2},
+  rna_heal:     {name:'RNA รักษา',icon:'💊',cost:12,learned:false,lvReq:2},
+  mutation_ray: {name:'รังสีมิวเทชัน',icon:'☢️',cost:20,learned:false,lvReq:3},
+  genome_blast: {name:'จีโนมบลาสต์',icon:'💥',cost:25,learned:false,lvReq:5},
 };
 
 const ENEMIES = {
   0:[
     {name:'ไวรัสกลายพันธุ์',sprite:'🦠',hp:40,maxHp:40,atk:8,xp:25,gold:10,color:'#22d3a0'},
     {name:'แบคทีเรียดื้อยา',sprite:'🧫',hp:55,maxHp:55,atk:12,xp:35,gold:15,color:'#a855f7'},
+    {name:'โปรตีนกลายพันธุ์',sprite:'🔴',hp:45,maxHp:45,atk:10,xp:28,gold:12,color:'#f87171'},
   ],
   1:[
     {name:'โครโมโซมกลายพันธุ์',sprite:'🌀',hp:75,maxHp:75,atk:16,xp:50,gold:20,color:'#f87171'},
     {name:'มิวแทนต์เซลล์',sprite:'👾',hp:90,maxHp:90,atk:20,xp:65,gold:28,color:'#fb923c'},
+    {name:'โครโมโซมผิดรูป',sprite:'🔮',hp:80,maxHp:80,atk:18,xp:55,gold:22,color:'#c084fc'},
   ],
   2:[
     {name:'บอสเมนเดล',sprite:'💀',hp:150,maxHp:150,atk:28,xp:120,gold:60,color:'#f59e0b',isBoss:true},
+    {name:'โรคทางพันธุกรรม',sprite:'🧬',hp:110,maxHp:110,atk:22,xp:85,gold:40,color:'#f87171'},
+  ],
+  3:[
+    {name:'มิวแทนต์อสูร',sprite:'👹',hp:140,maxHp:140,atk:30,xp:100,gold:50,color:'#ef4444'},
+    {name:'จักรพรรดิ์ Mutation',sprite:'☠️',hp:280,maxHp:280,atk:40,xp:250,gold:150,color:'#dc2626',isBoss:true,isFinal:true},
+    {name:'ไวรัส RNA เดือดดาล',sprite:'🔥',hp:180,maxHp:180,atk:35,xp:140,gold:70,color:'#f97316'},
   ],
 };
 
 // ══════════════════════════════════════════
-//  28 QUESTIONS — zone 0: 10, zone 1: 9, zone 2: 9
+//  55 QUESTIONS — z0:14, z1:13, z2:14, z3:14
 // ══════════════════════════════════════════
 const ALL_QUESTIONS = [
-  // ── ZONE 0: DNA พื้นฐาน (10 ข้อ) ──
+  // ── ZONE 0: DNA พื้นฐาน ── 14 ข้อ
   {z:0,q:'DNA มีโครงสร้างเป็นแบบใด?',opts:['เส้นตรงเดี่ยว','ทวิสต์คู่ (Double Helix)','วงกลม','สามสาย'],ans:1,dmg:28,exp:'DNA มีโครงสร้างเป็น Double Helix ค้นพบโดย Watson & Crick ปี 1953 โดยใช้ภาพเอกซเรย์ของ Rosalind Franklin'},
   {z:0,q:'คู่เบสใดจับกันใน DNA?',opts:['A-G และ T-C','A-C และ G-T','A-T และ G-C','A-A และ G-G'],ans:2,dmg:28,exp:'A-T จับด้วยพันธะไฮโดรเจน 2 พันธะ, G-C จับด้วย 3 พันธะ ตาม "กฎ Chargaff"'},
   {z:0,q:'DNA อยู่ในส่วนใดของเซลล์เป็นหลัก?',opts:['ไมโทคอนเดรีย','เยื่อหุ้มเซลล์','นิวเคลียส','ไรโบโซม'],ans:2,dmg:25,exp:'DNA ส่วนใหญ่อยู่ในนิวเคลียส แต่มีบางส่วนอยู่ในไมโทคอนเดรียด้วย เรียกว่า mtDNA'},
@@ -612,8 +458,12 @@ const ALL_QUESTIONS = [
   {z:0,q:'Transcription คือกระบวนการใด?',opts:['จาก DNA → mRNA','จาก mRNA → โปรตีน','จาก DNA → โปรตีน','จาก RNA → DNA'],ans:0,dmg:30,exp:'Transcription แปลง DNA เป็น mRNA เกิดในนิวเคลียส จากนั้น mRNA จะออกไปสร้างโปรตีนที่ไรโบโซม'},
   {z:0,q:'ใครค้นพบโครงสร้าง Double Helix ของ DNA?',opts:['Mendel & Darwin','Watson & Crick','Pasteur & Koch','Curie & Einstein'],ans:1,dmg:24,exp:'Watson & Crick ค้นพบปี 1953 และได้รับรางวัลโนเบลปี 1962 โดยอาศัยข้อมูล X-ray ของ Rosalind Franklin'},
   {z:0,q:'Translation คือกระบวนการใด?',opts:['จาก DNA → mRNA','จาก mRNA → โปรตีน','จาก DNA → tRNA','จาก rRNA → DNA'],ans:1,dmg:32,exp:'Translation แปลรหัส mRNA เป็นกรดอะมิโน เกิดที่ไรโบโซม โดย tRNA นำกรดอะมิโนมาต่อกันเป็นโปรตีน'},
+  {z:0,q:'Codon คืออะไร?',opts:['ลำดับ DNA 2 เบส','ลำดับ mRNA 3 เบสที่รหัสกรดอะมิโน 1 ชนิด','ลำดับ tRNA ทั้งหมด','เบส 1 ตัวใน DNA'],ans:1,dmg:32,exp:'Codon คือลำดับ mRNA 3 เบส (triplet) ที่กำหนดกรดอะมิโน 1 ชนิด หรือเป็นสัญญาณหยุด (Stop codon)'},
+  {z:0,q:'เอนไซม์ใดสำคัญในกระบวนการ Replication?',opts:['RNA Polymerase','Ribosome','DNA Polymerase','Ligase เท่านั้น'],ans:2,dmg:30,exp:'DNA Polymerase คือเอนไซม์หลักที่สังเคราะห์สาย DNA ใหม่ โดยใช้สายเก่าเป็นแม่แบบ'},
+  {z:0,q:'สาย DNA สองสายยึดกันด้วยอะไร?',opts:['พันธะโควาเลนต์','พันธะไฮโดรเจน','พันธะไอออนิก','พันธะแวนเดอวาลส์'],ans:1,dmg:28,exp:'สาย DNA ยึดกันด้วยพันธะไฮโดรเจน ระหว่างเบสคู่ A-T (2 พันธะ) และ G-C (3 พันธะ) ทำให้เปิดได้ง่ายในการ Replication'},
+  {z:0,q:'RNA Polymerase ทำหน้าที่อะไร?',opts:['จำลอง DNA','สังเคราะห์ mRNA จาก DNA','แปลรหัส mRNA','สร้างโปรตีน'],ans:1,dmg:30,exp:'RNA Polymerase คือเอนไซม์ที่ใช้ใน Transcription โดยจับกับ Promoter บน DNA แล้วสังเคราะห์ mRNA'},
 
-  // ── ZONE 1: โครโมโซม (9 ข้อ) ──
+  // ── ZONE 1: โครโมโซม ── 13 ข้อ
   {z:1,q:'มนุษย์มีโครโมโซมกี่แท่ง?',opts:['23','44','46','48'],ans:2,dmg:35,exp:'มนุษย์มีโครโมโซม 46 แท่ง (23 คู่) ได้รับจากพ่อ 23 แท่ง + แม่ 23 แท่ง'},
   {z:1,q:'โครโมโซมเพศของผู้ชายคืออะไร?',opts:['XX','XY','YY','XO'],ans:1,dmg:35,exp:'ผู้ชายมีโครโมโซมเพศ XY ส่วนผู้หญิงมี XX โครโมโซม Y กำหนดเพศชาย'},
   {z:1,q:'Karyotype คืออะไร?',opts:['รหัสพันธุกรรม','ภาพถ่ายและจัดเรียงโครโมโซม','ยีนพิเศษ','ฮอร์โมน'],ans:1,dmg:38,exp:'Karyotype คือการจัดเรียงโครโมโซมทั้ง 46 แท่งเป็นคู่ ใช้ตรวจความผิดปกติ เช่น ดาวน์ซินโดรม (Trisomy 21)'},
@@ -623,8 +473,12 @@ const ALL_QUESTIONS = [
   {z:1,q:'Meiosis ต่างจาก Mitosis อย่างไร?',opts:['Meiosis เร็วกว่า','Meiosis ลดโครโมโซมเหลือครึ่งหนึ่ง','Meiosis ใช้เวลาน้อยกว่า','Meiosis ได้เซลล์ 2 ใบ'],ans:1,dmg:40,exp:'Meiosis เกิด 2 รอบ ได้เซลล์ 4 ใบ แต่ละใบมีโครโมโซมครึ่งหนึ่ง (2n→n) ใช้สร้างเซลล์สืบพันธุ์'},
   {z:1,q:'เทิร์นเนอร์ซินโดรมเกิดจากอะไร?',opts:['มีโครโมโซม X เดียว (45,X)','มีโครโมโซม Y สามตัว','โครโมโซม 18 เกิน','โครโมโซม X สามตัว'],ans:0,dmg:42,exp:'Turner syndrome (45,X) เกิดในผู้หญิงที่มีโครโมโซม X เพียงตัวเดียว ทำให้ไม่มีประจำเดือนและเตี้ย'},
   {z:1,q:'Crossing Over เกิดในระยะใด?',opts:['Mitosis Prophase','Meiosis I Prophase','Meiosis II Anaphase','Interphase'],ans:1,dmg:44,exp:'Crossing Over เกิดใน Prophase I ของ Meiosis I โครโมโซมที่คล้ายกันแลกเปลี่ยนชิ้นส่วน ทำให้เกิดความหลากหลายทางพันธุกรรม'},
+  {z:1,q:'Nondisjunction คืออะไร?',opts:['โครโมโซมแตกหัก','โครโมโซมแยกตัวไม่สำเร็จ','โครโมโซมเพิ่มจำนวน','การกลายพันธุ์ของยีน'],ans:1,dmg:45,exp:'Nondisjunction คือความผิดพลาดที่โครโมโซมคู่ไม่แยกออกจากกัน ทำให้ได้เซลล์ที่มีโครโมโซมเกินหรือขาด เช่น Trisomy'},
+  {z:1,q:'ใน Mitosis ระยะใดที่โครโมโซมเรียงแถวกลางเซลล์?',opts:['Prophase','Metaphase','Anaphase','Telophase'],ans:1,dmg:40,exp:'Metaphase คือระยะที่โครโมโซมเรียงตัวที่กึ่งกลางเซลล์ (Metaphase Plate) และมองเห็นโครโมโซมได้ชัดที่สุด'},
+  {z:1,q:'Klinefelter syndrome (47,XXY) ส่งผลอย่างไร?',opts:['ผู้หญิงเตี้ย','ผู้ชายมีอัณฑะฝ่อ/มีนมขนาดใหญ่','ทารกพิการแต่กำเนิด','ไม่มีผลใดๆ'],ans:1,dmg:44,exp:'Klinefelter syndrome เกิดในผู้ชาย (XXY) มีอัณฑะเล็ก ผลิตอสุจิน้อย อาจมีหน้าอกใหญ่กว่าปกติ'},
+  {z:1,q:'โครมาทิด (Chromatid) คืออะไร?',opts:['โครโมโซมแต่ละแท่ง','ครึ่งหนึ่งของโครโมโซมที่จำลองแล้ว','เซนโทรเมียร์','DNA ที่ยังไม่ขดตัว'],ans:1,dmg:42,exp:'Sister Chromatid คือสำเนาของโครโมโซมที่ยึดกันที่ Centromere หลัง Replication ก่อนแยกออกจากกันใน Anaphase'},
 
-  // ── ZONE 2: พันธุกรรมเมนเดล (9 ข้อ) ──
+  // ── ZONE 2: พันธุกรรมเมนเดล ── 14 ข้อ
   {z:2,q:'Rr × Rr อัตราส่วนฟีโนไทป์คือ?',opts:['1:1','2:1','3:1','4:0'],ans:2,dmg:50,exp:'Rr × Rr → RR(1):Rr(2):rr(1) ฟีโนไทป์เด่น:ด้อย = 3:1 ตามกฎการแยก (Law of Segregation) ของเมนเดล'},
   {z:2,q:'ยีนด้อยแสดงออกเมื่อใด?',opts:['มีหนึ่งอัลลีล','มีสองอัลลีลด้อยเหมือนกัน (rr)','จับกับยีนเด่น','เสมอ'],ans:1,dmg:50,exp:'ยีนด้อยแสดงออกเฉพาะตอน Homozygous recessive (rr) หากมี R อยู่ด้วยจะถูกปิดบังโดยยีนเด่น'},
   {z:2,q:'อะไรคือ "จีโนไทป์"?',opts:['ลักษณะที่ปรากฏภายนอก','รหัสพันธุกรรมที่แท้จริง','สีของเซลล์','ขนาดของยีน'],ans:1,dmg:48,exp:'จีโนไทป์คือรหัสพันธุกรรม (เช่น RR, Rr, rr) ส่วนฟีโนไทป์คือลักษณะที่เห็นจากภายนอก เช่น สีดอกไม้'},
@@ -634,25 +488,47 @@ const ALL_QUESTIONS = [
   {z:2,q:'Codominance คืออะไร?',opts:['ยีนเด่นทับด้อย','ยีนทั้งสองแสดงออกพร้อมกัน','ยีนด้อยชนะ','ยีนไม่แสดงออก'],ans:1,dmg:55,exp:'Codominance คือยีนทั้งสองอัลลีลแสดงออกพร้อมกัน เช่น กรุ๊ปเลือด AB มีทั้ง A และ B แสดงออก'},
   {z:2,q:'Incomplete dominance ต่างจาก dominance อย่างไร?',opts:['เหมือนกัน','ลูกผสมมีฟีโนไทป์กึ่งกลาง','ลูกผสมเหมือนพ่อเสมอ','ยีนด้อยหาย'],ans:1,dmg:54,exp:'Incomplete dominance: RR(แดง) × rr(ขาว) → Rr(ชมพู) ฟีโนไทป์กึ่งกลาง ต่างจาก complete dominance ที่ Rr = แดง'},
   {z:2,q:'กรุ๊ปเลือด ABO ถ่ายทอดด้วยกฎใด?',opts:['กฎ Codominance เท่านั้น','Multiple alleles + Codominance','X-linked','Incomplete dominance'],ans:1,dmg:58,exp:'กรุ๊ปเลือด ABO มี 3 อัลลีล (Iᴬ, Iᴮ, i) และ Iᴬ กับ Iᴮ เป็น Codominance (AB) แต่ทั้งคู่เด่นกว่า i'},
+  {z:2,q:'ถ้า พ่อกรุ๊ป A (Iᴬi) × แม่กรุ๊ป B (Iᴮi) ลูกมีกรุ๊ปเลือดได้กี่ชนิด?',opts:['1 ชนิด','2 ชนิด','3 ชนิด','4 ชนิด'],ans:3,dmg:60,exp:'IᴬIᴮ(AB), Iᴬi(A), Iᴮi(B), ii(O) ลูกมีได้ทั้ง 4 กรุ๊ป! อัตราส่วน 1:1:1:1'},
+  {z:2,q:'Test Cross คืออะไร?',opts:['ผสมพ่อแม่เดิม','ผสมกับ Homozygous recessive เพื่อหาจีโนไทป์','ผสมพันธุ์ F1 กัน','ผสมข้ามพันธุ์ต่างชนิด'],ans:1,dmg:56,exp:'Test Cross คือการผสมกับ rr เพื่อตรวจว่าตัวแสดงลักษณะเด่นมีจีโนไทป์ RR หรือ Rr: ถ้า Rr ลูกบางส่วนจะเป็น rr'},
+  {z:2,q:'ยีนที่อยู่บนโครโมโซมเดียวกันเรียกว่าอะไร?',opts:['Multiple alleles','Linked genes','Codominant genes','Pleiotropic genes'],ans:1,dmg:55,exp:'Linked genes คือยีนที่อยู่บนโครโมโซมเดียวกัน มักถ่ายทอดร่วมกัน ยกเว้นเกิด Crossing Over แยกกัน'},
+  {z:2,q:'ฮีโมฟีเลียถ่ายทอดแบบใด?',opts:['Autosomal dominant','Autosomal recessive','X-linked recessive','Y-linked'],ans:2,dmg:58,exp:'ฮีโมฟีเลียเป็น X-linked recessive ผู้ชาย (X^h Y) เป็นโรค ผู้หญิงต้อง (X^h X^h) จึงเป็นโรค ผู้หญิง X^H X^h เป็น carrier'},
+  {z:2,q:'ถ้า Rr × Rr (Incomplete dominance) อัตราส่วนฟีโนไทป์คือ?',opts:['3:1','1:2:1','1:1','2:1'],ans:1,dmg:62,exp:'Incomplete dominance: RR(แดง):Rr(ชมพู):rr(ขาว) = 1:2:1 ซึ่งต่างจาก complete dominance ที่ได้ 3:1'},
+
+  // ── ZONE 3: แดนมืด Mutation (Gr.9 ระดับสูง) ── 14 ข้อ
+  {z:3,q:'Point mutation คืออะไร?',opts:['การเพิ่มจำนวน DNA','การเปลี่ยนเบสเพียง 1 คู่','โครโมโซมหัก','DNA จำลองผิดทุกสาย'],ans:1,dmg:65,exp:'Point mutation = การเปลี่ยนแปลงนิวคลีโอไทด์เพียง 1 คู่ แบ่งเป็น substitution, insertion, deletion'},
+  {z:3,q:'Frameshift mutation เกิดจากอะไร?',opts:['แสง UV','การเพิ่มหรือลบเบสจำนวนที่ไม่ใช่ 3','อุณหภูมิสูง','สารเคมี mutagen เท่านั้น'],ans:1,dmg:68,exp:'Frameshift mutation เกิดจาก insertion/deletion ที่ไม่ใช่ทวีคูณ 3 ทำให้ reading frame เลื่อน โปรตีนผิดรูปทั้งหมด'},
+  {z:3,q:'Silent mutation คืออะไร?',opts:['Mutation ที่ทำให้โปรตีนผิดรูป','Mutation ที่ไม่เปลี่ยนกรดอะมิโน','Mutation ในไมโทคอนเดรีย','Mutation ที่เป็นอันตรายที่สุด'],ans:1,dmg:65,exp:'Silent mutation เกิดจาก codon เปลี่ยนแต่ยังรหัสกรดอะมิโนเดิม (เพราะรหัสพันธุกรรมเสื่อม) โปรตีนไม่เปลี่ยน'},
+  {z:3,q:'Mutagen คืออะไร?',opts:['ยีนต้านทาน','สิ่งที่เพิ่มอัตรา mutation','เอนไซม์ซ่อม DNA','โปรตีนป้องกันเซลล์'],ans:1,dmg:62,exp:'Mutagen คือสิ่งที่เพิ่มอัตราการกลายพันธุ์ เช่น แสง UV, รังสี X, สารเคมีบางชนิด (benzene, aflatoxin)'},
+  {z:3,q:'มะเร็งเกี่ยวข้องกับพันธุกรรมอย่างไร?',opts:['ไม่เกี่ยวข้อง','Mutation ใน Proto-oncogene และ Tumor suppressor gene','เกิดจาก X-linked','เกิดจากโครโมโซมเกิน'],ans:1,dmg:70,exp:'มะเร็งเกิดจาก Mutation ใน Proto-oncogene (ทำให้กลายเป็น Oncogene) และ Tumor suppressor gene (เช่น p53, BRCA1)'},
+  {z:3,q:'Somatic mutation ต่างจาก Germline mutation อย่างไร?',opts:['เหมือนกัน','Somatic ไม่ถ่ายทอดสู่ลูก Germline ถ่ายทอดได้','Germline ไม่อันตราย','Somatic เกิดเฉพาะในสมอง'],ans:1,dmg:68,exp:'Somatic mutation เกิดในเซลล์ร่างกาย ไม่ส่งต่อลูกหลาน ส่วน Germline mutation เกิดในเซลล์สืบพันธุ์ ถ่ายทอดได้'},
+  {z:3,q:'Substitution mutation แบบ Missense คืออะไร?',opts:['Codon เปลี่ยนแต่ได้กรดอะมิโนเดิม','Codon เปลี่ยนทำให้ได้กรดอะมิโนต่าง','เกิด Stop codon ก่อนกำหนด','เบสเพิ่มขึ้น 1 ตัว'],ans:1,dmg:70,exp:'Missense mutation: เบสเปลี่ยนทำให้รหัสกรดอะมิโนต่างออกไป เช่น โรคซิกเคิลเซลล์เกิดจาก Glu→Val ใน Hemoglobin'},
+  {z:3,q:'ซิกเคิลเซลล์ (Sickle Cell Anemia) เกิดจากอะไร?',opts:['โครโมโซมเกิน','Point mutation ใน Hemoglobin gene','Frameshift mutation','Nondisjunction'],ans:1,dmg:72,exp:'Sickle Cell Anemia เกิดจาก Point mutation ที่ codon 6 ของ beta-globin: GAG (Glu) → GTG (Val) ทำให้ RBC รูปเคียว'},
+  {z:3,q:'PCR (Polymerase Chain Reaction) ใช้ทำอะไร?',opts:['ตัด DNA','จำลอง DNA ในห้องแล็บอย่างรวดเร็ว','ส่ง RNA','แปล mRNA'],ans:1,dmg:68,exp:'PCR ใช้จำลอง DNA segment ที่ต้องการนับล้านชุดในเวลาสั้น ใช้ใน forensics, การวินิจฉัยโรค, วิจัย'},
+  {z:3,q:'Gel Electrophoresis ใช้แยกอะไร?',opts:['เซลล์ตามขนาด','DNA/RNA/โปรตีนตามขนาดโมเลกุล','แบคทีเรียตามชนิด','กรดอะมิโนตามชาร์จ'],ans:1,dmg:66,exp:'Gel Electrophoresis ใช้กระแสไฟฟ้าแยก DNA/RNA/โปรตีนตามขนาด โมเลกุลเล็กเดินทางไกลกว่าในเจล'},
+  {z:3,q:'CRISPR-Cas9 คืออะไร?',opts:['ยาปฏิชีวนะ','เครื่องมือตัดแก้ไข DNA อย่างแม่นยำ','วัคซีน mRNA','กล้องจุลทรรศน์แบบใหม่'],ans:1,dmg:75,exp:'CRISPR-Cas9 เป็นเทคโนโลยีแก้ไขยีนที่แม่นยำ ใช้ guide RNA นำ Cas9 ไปตัด DNA ณ ตำแหน่งเฉพาะ'},
+  {z:3,q:'GMO (Genetically Modified Organism) คืออะไร?',opts:['สิ่งมีชีวิตที่ขยายพันธุ์เร็ว','สิ่งมีชีวิตที่ถูกเปลี่ยนแปลง DNA โดยมนุษย์','สิ่งมีชีวิตที่กลายพันธุ์ตามธรรมชาติ','สิ่งมีชีวิตที่โคลน'],ans:1,dmg:70,exp:'GMO คือสิ่งมีชีวิตที่มนุษย์ใส่ยีนจากภายนอกหรือแก้ไขยีน เช่น ข้าวโพด GMO ต้านทานแมลง, อินซูลินจากแบคทีเรีย'},
+  {z:3,q:'Stem Cell (เซลล์ต้นกำเนิด) พิเศษอย่างไร?',opts:['แบ่งตัวไม่ได้','เปลี่ยนเป็นเซลล์ชนิดต่างๆ ได้','มีโครโมโซมพิเศษ','ไม่มี DNA'],ans:1,dmg:68,exp:'Stem cell มีความสามารถ Pluripotency/Totipotency เปลี่ยนเป็นเซลล์ชนิดต่างๆ ได้ ใช้ในการรักษาโรค Regenerative Medicine'},
+  {z:3,q:'Human Genome Project (HGP) คืออะไร?',opts:['การทดลองสัตว์','โครงการถอดรหัส DNA ทั้งหมดของมนุษย์','การโคลนมนุษย์','การผลิต Vaccine mRNA'],ans:1,dmg:72,exp:'HGP เสร็จสมบูรณ์ปี 2003 ถอดรหัส DNA ทั้ง 3 พันล้านคู่เบส พบยีนประมาณ 20,000-25,000 ยีน ใช้เวลา 13 ปี'},
 ];
 
 // ══════════════════════════════════════════
-//  LEARN TIPS — รายละเอียดสำหรับปุ่มเรียนรู้
+//  LEARN TIPS
 // ══════════════════════════════════════════
 const LEARN_TIPS = {
   0:[
     {title:'โครงสร้าง DNA',tag:'พื้นฐาน',text:'DNA (Deoxyribonucleic Acid) เป็นโมเลกุลทวิสต์คู่ (Double Helix) ประกอบด้วยนิวคลีโอไทด์ที่มีน้ำตาลดีออกซีไรโบส, ฟอสเฟต และเบส 4 ชนิด คือ A, T, G, C'},
     {title:'กฎการจับคู่เบส',tag:'Chargaff',text:'A จับกับ T (2 พันธะ H), G จับกับ C (3 พันธะ H) ตามกฎ Chargaff ซึ่งทำให้ปริมาณ A=T และ G=C เสมอ'},
     {title:'Central Dogma',tag:'สำคัญมาก',text:'กฎหลักของชีววิทยาโมเลกุล: DNA → (Transcription) → mRNA → (Translation) → Protein เป็นทิศทางการไหลของข้อมูลพันธุกรรม'},
-    {title:'Replication กับ Transcription',tag:'เปรียบเทียบ',text:'Replication = คัดลอก DNA ทั้งหมด (ก่อนแบ่งเซลล์)\nTranscription = คัดลอกบางส่วนเป็น mRNA (เพื่อสร้างโปรตีน)'},
+    {title:'Replication vs Transcription',tag:'เปรียบเทียบ',text:'Replication = คัดลอก DNA ทั้งหมด (ก่อนแบ่งเซลล์)\nTranscription = คัดลอกบางส่วนเป็น mRNA (เพื่อสร้างโปรตีน)'},
     {title:'RNA 3 ชนิด',tag:'ประเภท',text:'mRNA (messenger) นำรหัสออกจากนิวเคลียส | tRNA (transfer) นำกรดอะมิโน | rRNA (ribosomal) เป็นส่วนประกอบของไรโบโซม'},
+    {title:'Codon & Anticodon',tag:'Translation',text:'Codon = mRNA 3 เบส กำหนดกรดอะมิโน | Anticodon = tRNA 3 เบส จับคู่กับ codon | Start codon = AUG | Stop codon = UAA, UAG, UGA'},
   ],
   1:[
     {title:'โครโมโซมมนุษย์',tag:'ตัวเลข',text:'มนุษย์มี 46 แท่ง (23 คู่) — คู่ที่ 1-22 เป็น Autosome และคู่ที่ 23 เป็นโครโมโซมเพศ (XX หรือ XY)'},
     {title:'Karyotype',tag:'การตรวจ',text:'Karyotype คือการถ่ายภาพและจัดเรียงโครโมโซม ใช้ตรวจความผิดปกติ เช่น Down syndrome (47,+21), Turner (45,X), Klinefelter (47,XXY)'},
     {title:'Mitosis vs Meiosis',tag:'เปรียบเทียบ',text:'Mitosis: 2n→2n, ได้ 2 เซลล์เหมือนเดิม, ใช้เจริญเติบโต\nMeiosis: 2n→n, ได้ 4 เซลล์ครึ่งชุด, ใช้สร้างเซลล์สืบพันธุ์'},
     {title:'ความผิดปกติโครโมโซม',tag:'โรค',text:'Down (Trisomy 21) | Patau (Trisomy 13) | Edwards (Trisomy 18) | Turner (45,X) | Klinefelter (47,XXY) | Triple X (47,XXX)'},
-    {title:'Crossing Over',tag:'ความหลากหลาย',text:'Crossing Over ใน Prophase I ของ Meiosis ทำให้โครโมโซมแลกเปลี่ยนชิ้นส่วนกัน สร้างความหลากหลายทางพันธุกรรมในลูกหลาน'},
+    {title:'Crossing Over & Nondisjunction',tag:'ความหลากหลาย',text:'Crossing Over ใน Prophase I → ความหลากหลายทางพันธุกรรม\nNondisjunction → โครโมโซมเกิน/ขาด → Trisomy/Monosomy'},
   ],
   2:[
     {title:'กฎเมนเดล 2 ข้อ',tag:'สำคัญ',text:'1. กฎการแยก (Segregation): อัลลีลแยกออกจากกันเมื่อสร้างเซลล์สืบพันธุ์\n2. กฎการรวมตัวอิสระ (Independent Assortment): ยีนต่างโครโมโซมถ่ายทอดอิสระ'},
@@ -660,29 +536,28 @@ const LEARN_TIPS = {
     {title:'X-linked Traits',tag:'เพศสัมพันธ์',text:'ลักษณะที่อยู่บนโครโมโซม X เช่น ตาบอดสี, ฮีโมฟีเลีย พบในผู้ชายบ่อยกว่า เพราะผู้ชายมี X เพียงตัวเดียว (Hemizygous)'},
     {title:'กรุ๊ปเลือด ABO',tag:'ตัวอย่างจริง',text:'มี 3 อัลลีล: Iᴬ, Iᴮ (Codominant กัน), i (Recessive)\nกรุ๊ป A: IᴬIᴬ หรือ Iᴬi | B: IᴮIᴮ หรือ Iᴮi | AB: IᴬIᴮ | O: ii'},
     {title:'Incomplete vs Codominance',tag:'เปรียบเทียบ',text:'Incomplete dominance: RR(แดง)×rr(ขาว)→Rr(ชมพู) ฟีโนไทป์กึ่งกลาง\nCodominance: IᴬIᴮ → มีทั้ง A และ B แสดงพร้อมกัน ไม่ผสมกัน'},
+    {title:'Test Cross & Linked Genes',tag:'ขั้นสูง',text:'Test Cross ผสมกับ rr เพื่อหาจีโนไทป์ (RR หรือ Rr)\nLinked Genes คือยีนบนโครโมโซมเดียวกัน มักถ่ายทอดร่วมกัน ยกเว้นเกิด Crossing Over'},
+  ],
+  3:[
+    {title:'ประเภทของ Mutation',tag:'Gr.9',text:'Point mutation: เปลี่ยนเบสเดียว (Substitution, Insertion, Deletion)\nFrameshift: เพิ่ม/ลบเบสที่ไม่ใช่ทวีคูณ 3 → reading frame เลื่อน\nChromosomal mutation: โครโมโซมเปลี่ยนแปลงโครงสร้าง'},
+    {title:'Mutation & Cancer',tag:'ชีวิตจริง',text:'Proto-oncogene → Oncogene (mutation) → เซลล์แบ่งตัวไม่หยุด\nTumor suppressor gene (เช่น p53, BRCA1) เมื่อ mutate → ไม่หยุดการเจริญ → มะเร็ง'},
+    {title:'Mutagen ชนิดต่างๆ',tag:'สาเหตุ',text:'Physical: แสง UV, รังสี X\nChemical: benzene, aflatoxin, ควันบุหรี่\nBiological: ไวรัส HPV, Hepatitis B → เพิ่มความเสี่ยงมะเร็ง'},
+    {title:'เทคโนโลยีชีวภาพ',tag:'Biotechnology',text:'PCR: จำลอง DNA นับล้านชุดรวดเร็ว\nGel Electrophoresis: แยก DNA ตามขนาด\nCRISPR-Cas9: แก้ไขยีนอย่างแม่นยำ\nGMO: ใส่ยีนจากภายนอก'},
+    {title:'Sickle Cell & Disease',tag:'ตัวอย่าง',text:'Sickle Cell Anemia: Point mutation codon 6 ของ beta-globin GAG→GTG (Glu→Val)\nAutosomal recessive: ต้องเป็น homozygous จึงป่วย\nHeterozygous carrier มีภูมิต้านมาลาเรีย'},
+    {title:'Human Genome & ทิศทางอนาคต',tag:'ล้ำ',text:'Human Genome Project: ถอดรหัส 3 พันล้านคู่เบส ปี 2003\nยีนประมาณ 20,000-25,000 ยีน\nPersonalized Medicine, Gene Therapy, Stem Cell คืออนาคต'},
   ],
 };
 
 // ══════════════════════════════════════════
 //  NO-REPEAT QUESTION SYSTEM
 // ══════════════════════════════════════════
-function shuffleArr(arr){
-  const a=[...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
-
+function shuffleArr(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function getNextQuestion(zone){
-  // Each zone uses ONLY its own questions — no cross-zone mixing
   if(G.questionQueue[zone].length===0){
-    // Collect indices of questions belonging strictly to this zone
-    const zoneIndices = ALL_QUESTIONS
-      .map((q,i)=>({q,i}))
-      .filter(({q})=>q.z===zone)
-      .map(({i})=>i);
-    G.questionQueue[zone] = shuffleArr(zoneIndices);
+    const zoneIndices=ALL_QUESTIONS.map((q,i)=>({q,i})).filter(({q})=>q.z===zone).map(({i})=>i);
+    G.questionQueue[zone]=shuffleArr(zoneIndices);
   }
-  const idx = G.questionQueue[zone].shift();
+  const idx=G.questionQueue[zone].shift();
   return ALL_QUESTIONS[idx];
 }
 
@@ -691,10 +566,9 @@ function getNextQuestion(zone){
 // ══════════════════════════════════════════
 function initParticles(){
   const c=document.getElementById('particles');
-  const e=['🧬','🔬','⚗️','💊','🧫','🔭','⚡','🌀'];
-  for(let i=0;i<16;i++){
-    const p=document.createElement('div');
-    p.className='particle';p.textContent=e[i%e.length];
+  const e=['🧬','🔬','⚗️','💊','🧫','🔭','⚡','🌀','💉','🦠','🔴','🌡️'];
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div');p.className='particle';p.textContent=e[i%e.length];
     p.style.cssText=`left:${Math.random()*100}%;font-size:${0.7+Math.random()*1.1}rem;animation-duration:${7+Math.random()*8}s;animation-delay:${-Math.random()*8}s;`;
     c.appendChild(p);
   }
@@ -708,33 +582,28 @@ const ZONE_SCENES={
   0:{color1:'#0a1628',color2:'#0d1f3c',pc:'cyan'},
   1:{color1:'#1a0a28',color2:'#2d1050',pc:'purple'},
   2:{color1:'#281a0a',color2:'#3d2810',pc:'yellow'},
+  3:{color1:'#1a0808',color2:'#2d0a0a',pc:'red'},
 };
 let sceneT=0;
 function drawScene(){
-  const canvas=document.getElementById('sceneCanvas');
-  if(!canvas)return;
-  const w=canvas.offsetWidth,h=canvas.offsetHeight;
-  if(w===0||h===0){requestAnimationFrame(drawScene);return;}
-  canvas.width=w;canvas.height=h;
-  const ctx=canvas.getContext('2d');
+  const canvas=document.getElementById('sceneCanvas');if(!canvas)return;
+  const w=canvas.offsetWidth,h=canvas.offsetHeight;if(w===0||h===0){requestAnimationFrame(drawScene);return;}
+  canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');
   const zs=ZONE_SCENES[G.zone]||ZONE_SCENES[0];
-  const grad=ctx.createLinearGradient(0,0,w,h);
-  grad.addColorStop(0,zs.color1);grad.addColorStop(1,zs.color2);
+  const grad=ctx.createLinearGradient(0,0,w,h);grad.addColorStop(0,zs.color1);grad.addColorStop(1,zs.color2);
   ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
-  const cols={cyan:'rgba(0,229,255,',purple:'rgba(168,85,247,',yellow:'rgba(251,191,36,'};
+  const cols={cyan:'rgba(0,229,255,',purple:'rgba(168,85,247,',yellow:'rgba(251,191,36,',red:'rgba(248,113,113,'};
   const c=cols[zs.pc]||cols.cyan;
-  for(let i=0;i<25;i++){
+  for(let i=0;i<(G.zone===3?35:25);i++){
     const x=(Math.sin(sceneT*0.3+i*2.1)*0.5+0.5)*w;
     const y=((sceneT*0.04+i*0.033)%1)*h;
     const r=1+Math.sin(sceneT+i)*0.7;
-    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
-    ctx.fillStyle=c+(0.25+Math.sin(sceneT+i)*0.2)+')';ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=c+(0.25+Math.sin(sceneT+i)*0.2)+')';ctx.fill();
   }
   ctx.strokeStyle=c+'0.04)';ctx.lineWidth=1;
   for(let x=0;x<w;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
   for(let y=0;y<h;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
-  sceneT+=0.5;
-  requestAnimationFrame(drawScene);
+  sceneT+=0.5;requestAnimationFrame(drawScene);
 }
 drawScene();
 
@@ -752,24 +621,16 @@ function updateHUD(){
   document.getElementById('hudGold').textContent=`💰 ${G.gold}`;
   document.getElementById('playerFighterHP').style.width=(G.hp/G.hpMax*100)+'%';
 }
-
 function addMsg(text,type='narrator'){
   const box=document.getElementById('dialogueBox');
-  const div=document.createElement('div');
-  div.className=`msg ${type}`;div.innerHTML=text;
+  const div=document.createElement('div');div.className=`msg ${type}`;div.innerHTML=text;
   box.appendChild(div);box.scrollTop=box.scrollHeight;
 }
 function clearMsgs(){document.getElementById('dialogueBox').innerHTML='';}
-
 function setActions(actions){
   const grid=document.getElementById('actionGrid');
-  grid.innerHTML=actions.map(a=>
-    `<button class="action-btn${a.danger?' danger':''}" onclick="${a.fn}" ${a.disabled?'disabled':''}>
-      <span>${a.icon}</span><span style="flex:1">${a.label}</span>${a.cost?`<span class="cost">${a.cost}MP</span>`:''}
-    </button>`
-  ).join('');
+  grid.innerHTML=actions.map(a=>`<button class="action-btn${a.danger?' danger':''}" onclick="${a.fn}" ${a.disabled?'disabled':''}><span>${a.icon}</span><span style="flex:1">${a.label}</span>${a.cost?`<span class="cost">${a.cost}MP</span>`:''}</button>`).join('');
 }
-
 function showEnemy(e){
   const ef=document.getElementById('enemyFighter');ef.style.display='flex';
   document.getElementById('enemyName').textContent=e.name;
@@ -777,133 +638,97 @@ function showEnemy(e){
   document.getElementById('enemyFighterHP').style.width='100%';
 }
 function hideEnemy(){document.getElementById('enemyFighter').style.display='none';}
-
-function updateEnemyHP(){
-  if(!G.enemy)return;
-  const pct=Math.max(0,G.enemy.hp/G.enemy.maxHp*100);
-  document.getElementById('enemyFighterHP').style.width=pct+'%';
-}
-
+function updateEnemyHP(){if(!G.enemy)return;document.getElementById('enemyFighterHP').style.width=Math.max(0,G.enemy.hp/G.enemy.maxHp*100)+'%';}
 function floatNum(text,color,targetId){
-  const el=document.createElement('div');
-  el.className='float-num';el.textContent=text;el.style.color=color;
-  const ref=document.getElementById(targetId||'enemyFighter');
-  const rect=ref.getBoundingClientRect();
-  el.style.left=(rect.left+rect.width/2-20)+'px';
-  el.style.top=(rect.top+20)+'px';
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),1200);
+  const el=document.createElement('div');el.className='float-num';el.textContent=text;el.style.color=color;
+  const ref=document.getElementById(targetId||'enemyFighter');const rect=ref.getBoundingClientRect();
+  el.style.left=(rect.left+rect.width/2-20)+'px';el.style.top=(rect.top+20)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1200);
 }
-
 function updateSkillPanel(){
-  const list=document.getElementById('skillList');
-  if(!list)return;
+  const list=document.getElementById('skillList');if(!list)return;
   list.innerHTML=Object.entries(SKILLS).map(([id,sk])=>{
     const learned=G.skills.includes(id);
-    return `<div class="skill-item ${learned?'learned':'locked'}">
-      <span class="skill-icon">${sk.icon}</span>
-      <span class="skill-name">${sk.name}</span>
-      <span class="skill-badge ${learned?'badge-learned':'badge-locked'}">${learned?'✓':sk.lvReq?`Lv${sk.lvReq}`:'?'}</span>
-    </div>`;
+    return `<div class="skill-item ${learned?'learned':'locked'}"><span class="skill-icon">${sk.icon}</span><span class="skill-name">${sk.name}</span><span class="skill-badge ${learned?'badge-learned':'badge-locked'}">${learned?'✓':sk.lvReq?`Lv${sk.lvReq}`:'?'}</span></div>`;
   }).join('');
-  const items=document.getElementById('itemList');
-  if(items)items.innerHTML=`
+  const items=document.getElementById('itemList');if(items)items.innerHTML=`
     <div class="item-row">💊 ยาฟื้น HP <span class="item-count">×${G.items.potion}</span></div>
     <div class="item-row">🧬 DNA Fragment <span class="item-count">×${G.items.dna_fragment}</span></div>
+    <div class="item-row">💉 ยาต้านพิษ <span class="item-count">×${G.items.antidote}</span></div>
+  `;
+  const stats=document.getElementById('statList');if(stats)stats.innerHTML=`
+    <div class="item-row">✅ ตอบถูก <span class="item-count" style="color:var(--green)">${G.totalCorrect}</span></div>
+    <div class="item-row">❌ ตอบผิด <span class="item-count" style="color:var(--red)">${G.totalWrong}</span></div>
+    <div class="item-row">🏆 ชนะ <span class="item-count" style="color:var(--yellow)">${G.battlesWon}</span></div>
   `;
 }
-
-// Mobile: map opens as overlay, desktop: side panel collapse
 function toggleMap(){
-  const p=document.getElementById('mapPanel');
-  const ov=document.getElementById('mapOverlay');
-  const isMobile=window.innerWidth<=600;
-  if(isMobile){
-    const open=p.classList.toggle('open');
-    ov.classList.toggle('show',open);
-  } else {
-    p.classList.toggle('collapsed');
-  }
+  const p=document.getElementById('mapPanel'),ov=document.getElementById('mapOverlay');
+  if(window.innerWidth<=600){const open=p.classList.toggle('open');ov.classList.toggle('show',open);}
+  else{p.classList.toggle('collapsed');}
 }
-
 function updateMapZones(){
   const z1=document.getElementById('zone1El'),z2=document.getElementById('zone2El');
+  const z3=document.getElementById('zone3El');
   const l1=document.getElementById('zone1lock'),l2=document.getElementById('zone2lock');
+  const l3=document.getElementById('zone3lock');
   if(G.lv>=2){z1.classList.remove('locked');if(l1)l1.textContent='';}
   if(G.lv>=3){z2.classList.remove('locked');if(l2)l2.textContent='';}
+  if(G.lv>=5){z3.classList.remove('locked');if(l3)l3.textContent='';}
   document.querySelectorAll('.map-zone').forEach((z,i)=>z.classList.toggle('active',i===G.zone));
 }
 
 // ══════════════════════════════════════════
 //  QUIZ ENGINE
 // ══════════════════════════════════════════
-let quizTimeLeft=20;
-// Store current quiz state safely — no inline onclick string escaping
+let quizTimeLeft=25;
 let _quizState={newAns:0,exp:'',dmg:0};
-
 function openQuiz(onDone){
   clearInterval(G.timerInterval);
   const q=getNextQuestion(G.zone);
   G.quizCallback=onDone;G.quizCorrect=false;
+  document.getElementById('qTitle').textContent=G.zone===3?'☠️ คำถามระดับบอส':'⚔️ คำถามพันธุศาสตร์';
   document.getElementById('quizQ').textContent=q.q;
   const optsEl=document.getElementById('quizOpts');
-  // Shuffle answer options
   const shuffledIdx=shuffleArr([0,1,2,3]);
   const shuffledOpts=shuffledIdx.map(i=>q.opts[i]);
   const newAns=shuffledIdx.indexOf(q.ans);
-  // Save to module-level state so event listeners can access safely
   _quizState={newAns,exp:q.exp,dmg:q.dmg};
-  // Build buttons with data-index only — no string interpolation of user content
-  optsEl.innerHTML=shuffledOpts.map((o,i)=>
-    `<button class="qopt" data-idx="${i}">${o}</button>`
-  ).join('');
-  // Attach listeners cleanly — no escaping issues
+  optsEl.innerHTML=shuffledOpts.map((o,i)=>`<button class="qopt" data-idx="${i}">${o}</button>`).join('');
   optsEl.querySelectorAll('.qopt').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const chosen=parseInt(btn.dataset.idx,10);
-      answerQuiz(chosen,_quizState.newAns,_quizState.exp,_quizState.dmg);
-    });
+    btn.addEventListener('click',()=>answerQuiz(parseInt(btn.dataset.idx,10),_quizState.newAns,_quizState.exp,_quizState.dmg));
   });
   document.getElementById('quizResult').className='quiz-result';
   document.getElementById('quizContinue').className='quiz-continue';
   document.getElementById('quizModal').classList.remove('hidden');
-  quizTimeLeft=20;
-  document.getElementById('timerLabel').textContent='⏱ 20s';
+  const timeLimit=G.zone===3?30:25;
+  quizTimeLeft=timeLimit;
+  document.getElementById('timerLabel').textContent=`⏱ ${timeLimit}s`;
   document.getElementById('timerFill').style.width='100%';
   G.timerInterval=setInterval(()=>{
     quizTimeLeft--;
     document.getElementById('timerLabel').textContent=`⏱ ${quizTimeLeft}s`;
-    document.getElementById('timerFill').style.width=(quizTimeLeft/20*100)+'%';
-    if(quizTimeLeft<=0){
-      clearInterval(G.timerInterval);
-      answerQuiz(-1,_quizState.newAns,_quizState.exp,_quizState.dmg);
-    }
+    document.getElementById('timerFill').style.width=(quizTimeLeft/timeLimit*100)+'%';
+    if(quizTimeLeft<=0){clearInterval(G.timerInterval);answerQuiz(-1,_quizState.newAns,_quizState.exp,_quizState.dmg);}
   },1000);
 }
-
 function answerQuiz(chosen,correct,exp,dmg){
   clearInterval(G.timerInterval);
-  const opts=document.querySelectorAll('.qopt');
-  opts.forEach(o=>o.disabled=true);
+  const opts=document.querySelectorAll('.qopt');opts.forEach(o=>o.disabled=true);
   if(opts[correct])opts[correct].classList.add('correct');
   if(chosen!==correct&&chosen>=0&&opts[chosen])opts[chosen].classList.add('wrong');
-  G.quizCorrect=chosen===correct;
-  // Mark timeout so doQuizAttack can apply extra penalty
-  G.quizTimeout=(chosen===-1);
+  G.quizCorrect=chosen===correct;G.quizTimeout=(chosen===-1);
+  if(G.quizCorrect){G.totalCorrect++;sfxCorrect();}else{G.totalWrong++;sfxWrong();}
   const res=document.getElementById('quizResult');
   if(G.quizCorrect){
-    res.className='quiz-result show ok';
-    res.innerHTML=`✅ ถูกต้อง! +${dmg} ดาเมจ<br><small>${exp}</small>`;
+    res.className='quiz-result show ok';res.innerHTML=`✅ ถูกต้อง! +${dmg} ดาเมจ<br><small>${exp}</small>`;
   } else if(G.quizTimeout){
-    res.className='quiz-result show no';
-    res.innerHTML=`⏰ หมดเวลา! ศัตรูโจมตีหนักมาก! ×2.5<br><small>${exp}</small>`;
+    res.className='quiz-result show no';res.innerHTML=`⏰ หมดเวลา! ศัตรูโจมตีหนักมาก! ×2.5<br><small>${exp}</small>`;
   } else {
-    res.className='quiz-result show no';
-    res.innerHTML=`❌ ผิด! ศัตรูโจมตีหนัก! ×1.8<br><small>${exp}</small>`;
+    res.className='quiz-result show no';res.innerHTML=`❌ ผิด! ศัตรูโจมตีหนัก! ×1.8<br><small>${exp}</small>`;
   }
   document.getElementById('quizContinue').className='quiz-continue show';
 }
-
 function continueAfterQuiz(){
   document.getElementById('quizModal').classList.add('hidden');
   if(G.quizCallback)G.quizCallback(G.quizCorrect);
@@ -914,18 +739,9 @@ function continueAfterQuiz(){
 // ══════════════════════════════════════════
 function openLearn(){
   const tips=LEARN_TIPS[G.zone]||LEARN_TIPS[0];
-  const html=tips.map(t=>`
-    <div class="learn-card">
-      <span class="tag">${t.tag}</span>
-      <h4>${t.title}</h4>
-      <p>${t.text.replace(/\n/g,'<br>')}</p>
-    </div>
-  `).join('');
-  document.getElementById('learnCards').innerHTML=html;
+  document.getElementById('learnCards').innerHTML=tips.map(t=>`<div class="learn-card"><span class="tag">${t.tag}</span><h4>${t.title}</h4><p>${t.text.replace(/\n/g,'<br>')}</p></div>`).join('');
   document.getElementById('learnModal').classList.remove('hidden');
-  // MP regen bonus
-  G.mp=Math.min(G.mpMax,G.mp+5);
-  updateHUD();
+  G.mp=Math.min(G.mpMax,G.mp+5);updateHUD();
   addMsg('📚 MP +5 จากการเรียนรู้!','reward');
 }
 function closeLearn(){
@@ -939,137 +755,173 @@ function closeLearn(){
 function startBattle(enemy){
   G.inBattle=true;G.enemy={...enemy};
   showEnemy(G.enemy);clearMsgs();
-  addMsg(`⚔️ ${G.enemy.isBoss?'บอสปรากฏตัว!':'ศัตรูปรากฏ!'} <strong style="color:${G.enemy.color}">${G.enemy.name} ${G.enemy.sprite}</strong>`,'narrator');
-  if(G.enemy.isBoss)addMsg(`💀 "ฉันจะทำลายรหัสพันธุกรรมทั้งหมด! เจ้าไม่มีทางชนะ!"`, 'npc');
+  if(G.enemy.isFinal){
+    addMsg(`☠️ <strong style="color:#dc2626;font-size:1.1em">จักรพรรดิ์ MUTATION ปรากฏตัว!</strong> — บอสสุดท้ายแห่ง Bio-Sphere!`,'narrator');
+    addMsg(`☠️ "ฮ่าๆ! เจ้าคือ ม. 3 ที่กล้ามาท้าทายฉัน? ตอบคำถามผ่านฉันได้ก็ชนะโลก!"`, 'npc');
+    addMsg(`💡 เคล็ดลับ: Zone 3 มีคำถามเรื่อง Mutation, Biotechnology ระดับสูง ตอบให้ได้!`,'narrator');
+  } else if(G.enemy.isBoss){
+    addMsg(`⚠️ บอสปรากฏ! <strong style="color:${G.enemy.color}">${G.enemy.name} ${G.enemy.sprite}</strong>`,'narrator');
+    addMsg(`💀 "${G.enemy.name}: ยอมแพ้ได้แล้ว! เจ้าไม่มีทางชนะฉัน!"`, 'npc');
+  } else {
+    addMsg(`⚔️ ศัตรูปรากฏ! <strong style="color:${G.enemy.color}">${G.enemy.name} ${G.enemy.sprite}</strong>`,'narrator');
+  }
   setBattleActions();
 }
-
 function setBattleActions(){
-  setActions([
+  const hasGeneShield=G.skills.includes('gene_shield');
+  const hasMutationRay=G.skills.includes('mutation_ray');
+  const hasGenomeBlast=G.skills.includes('genome_blast');
+  const actions=[
     {icon:'❓',label:'ตอบคำถาม',fn:'doQuizAttack()',cost:10,disabled:G.mp<10},
     {icon:'🔍',label:'วิเคราะห์',fn:'doAnalyze()',cost:5,disabled:G.mp<5},
-    {icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0},
-    {icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true},
-  ]);
+  ];
+  if(hasGeneShield)actions.push({icon:'🛡️',label:'โล่จีน',fn:'doGeneShield()',cost:15,disabled:G.mp<15});
+  if(hasMutationRay)actions.push({icon:'☢️',label:'รังสีมิวเทชัน',fn:'doMutationRay()',cost:20,disabled:G.mp<20});
+  if(hasGenomeBlast)actions.push({icon:'💥',label:'จีโนมบลาสต์',fn:'doGenomeBlast()',cost:25,disabled:G.mp<25});
+  actions.push({icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0});
+  actions.push({icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true});
+  setActions(actions.slice(0,6));
 }
-
 function doQuizAttack(){
-  if(G.mp<10)return;
-  G.mp=Math.max(0,G.mp-10);updateHUD();
+  if(G.mp<10)return;G.mp=Math.max(0,G.mp-10);updateHUD();
   openQuiz((correct)=>{
     if(!G.inBattle)return;
     if(correct){
-      const dmg=28+G.lv*8+Math.floor(Math.random()*10);
+      const base=G.zone===3?40:28;
+      const dmg=base+G.lv*8+Math.floor(Math.random()*12);
       G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
       floatNum(`-${dmg}`,'#f87171','enemyFighter');
       addMsg(`💥 ตอบถูก! โจมตี <strong style="color:var(--red)">${dmg} ดาเมจ</strong>!`,'player');
       if(G.enemy.hp<=0){winBattle();return;}
-      // Counter-attack after correct answer — stronger than before
       setTimeout(()=>{
         if(!G.inBattle||G.enemy.hp<=0)return;
         const edm=Math.floor(G.enemy.atk*1.0+Math.random()*8);
         G.hp=Math.max(0,G.hp-edm);updateHUD();
         floatNum(`-${edm}`,'#22d3a0','playerFighter');
         addMsg(`⚡ ${G.enemy.name} โต้กลับ <strong style="color:var(--red)">${edm} ดาเมจ</strong>!`,'damage');
-        if(G.hp<=0){loseGame();return;}
-        setBattleActions();
+        if(G.hp<=0){loseGame();return;}setBattleActions();
       },800);
     } else {
-      // Wrong answer 1.8×, timeout 2.5× — much more punishing
-      const mult = G.quizTimeout ? 2.5 : 1.8;
-      const dmg=Math.floor(G.enemy.atk*mult+Math.random()*12);
+      const mult=G.quizTimeout?2.5:1.8;
+      const dmg=Math.floor(G.enemy.atk*mult+Math.random()*14);
       G.hp=Math.max(0,G.hp-dmg);updateHUD();
       floatNum(`-${dmg}`,'#22d3a0','playerFighter');
-      const msg=G.quizTimeout
-        ? `⏰ หมดเวลา! ${G.enemy.name} โจมตีหนักมาก <strong style="color:var(--red)">${dmg} ดาเมจ</strong>! (×2.5)`
-        : `💢 ตอบผิด! ${G.enemy.name} โจมตีหนัก <strong style="color:var(--red)">${dmg} ดาเมจ</strong>! (×1.8)`;
+      const msg=G.quizTimeout?`⏰ หมดเวลา! ${G.enemy.name} โจมตีหนักมาก <strong style="color:var(--red)">${dmg} ดาเมจ</strong>! (×2.5)`:
+        `💢 ตอบผิด! ${G.enemy.name} โจมตีหนัก <strong style="color:var(--red)">${dmg} ดาเมจ</strong>! (×1.8)`;
       addMsg(msg,'damage');
-      if(G.hp<=0){loseGame();return;}
-      setBattleActions();
+      if(G.hp<=0){loseGame();return;}setBattleActions();
     }
   });
 }
-
 function doAnalyze(){
-  if(G.mp<5)return;
-  G.mp=Math.max(0,G.mp-5);updateHUD();
-  const info=[
-    `HP ศัตรู: ${G.enemy.hp}/${G.enemy.maxHp} | ATK: ${G.enemy.atk}`,
-    `${G.enemy.name} อ่อนแอต่อคำถามพันธุศาสตร์มาก!`,
-    `วิเคราะห์แล้ว: ตอบถูกจะทำดาเมจสูง!`,
-  ];
+  if(G.mp<5)return;G.mp=Math.max(0,G.mp-5);updateHUD();
+  const info=[`HP ศัตรู: ${G.enemy.hp}/${G.enemy.maxHp} | ATK: ${G.enemy.atk}`,`${G.enemy.name} อ่อนแอต่อคำถามพันธุศาสตร์มาก!`,`วิเคราะห์: ตอบถูกจะทำดาเมจสูง! ตอบผิด = รับ ×1.8 ดาเมจ`];
   addMsg(`🔍 ${info[Math.floor(Math.random()*info.length)]}`,'narrator');
-  G.mp=Math.min(G.mpMax,G.mp+3);updateHUD();
-  setBattleActions();
+  G.mp=Math.min(G.mpMax,G.mp+3);updateHUD();setBattleActions();
 }
-
+function doGeneShield(){
+  if(G.mp<15)return;G.mp=Math.max(0,G.mp-15);updateHUD();
+  const shield=Math.floor(G.enemy.atk*1.5);
+  G.hp=Math.min(G.hpMax,G.hp+shield);updateHUD();
+  floatNum(`+${shield}`,'#818cf8','playerFighter');
+  addMsg(`🛡️ โล่จีนป้องกัน +${shield} HP!`,'reward');setBattleActions();
+}
+function doMutationRay(){
+  if(G.mp<20)return;G.mp=Math.max(0,G.mp-20);updateHUD();
+  const dmg=50+G.lv*10+Math.floor(Math.random()*20);
+  G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
+  floatNum(`-${dmg}`,'#f87171','enemyFighter');
+  addMsg(`☢️ รังสีมิวเทชัน! ดาเมจ <strong style="color:var(--red)">${dmg}</strong>!`,'player');
+  if(G.enemy.hp<=0){winBattle();return;}setBattleActions();
+}
+function doGenomeBlast(){
+  if(G.mp<25)return;G.mp=Math.max(0,G.mp-25);updateHUD();
+  const dmg=80+G.lv*15+Math.floor(Math.random()*25);
+  G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
+  floatNum(`-${dmg}`,'#fbbf24','enemyFighter');
+  addMsg(`💥 จีโนมบลาสต์! ดาเมจ <strong style="color:var(--yellow)">${dmg}</strong>! ✨`,'player');
+  if(G.enemy.hp<=0){winBattle();return;}
+  const edm=Math.floor(G.enemy.atk*0.8+Math.random()*8);
+  setTimeout(()=>{
+    if(!G.inBattle)return;G.hp=Math.max(0,G.hp-edm);updateHUD();
+    addMsg(`⚡ ${G.enemy.name} โต้กลับ ${edm} ดาเมจ!`,'damage');
+    if(G.hp<=0){loseGame();return;}setBattleActions();
+  },600);
+}
 function usePotion(){
-  if(G.items.potion<=0)return;
-  G.items.potion--;
-  const heal=30+G.lv*5;
-  G.hp=Math.min(G.hpMax,G.hp+heal);updateHUD();
+  if(G.items.potion<=0)return;G.items.potion--;
+  const heal=30+G.lv*5;G.hp=Math.min(G.hpMax,G.hp+heal);updateHUD();
   floatNum(`+${heal}`,'#22d3a0','playerFighter');
   addMsg(`💊 ดื่มยา! ฟื้นฟู <strong style="color:var(--green)">${heal} HP</strong>`,'reward');
   updateSkillPanel();
   setTimeout(()=>{
-    if(!G.inBattle)return;
-    const edm=G.enemy.atk+Math.floor(Math.random()*6);
-    G.hp=Math.max(0,G.hp-edm);updateHUD();
-    addMsg(`⚡ ${G.enemy.name} โจมตีขณะดื่มยา ${edm} ดาเมจ!`,'damage');
-    if(G.hp<=0){loseGame();return;}
-    setBattleActions();
+    if(!G.inBattle)return;const edm=G.enemy.atk+Math.floor(Math.random()*6);
+    G.hp=Math.max(0,G.hp-edm);updateHUD();addMsg(`⚡ ${G.enemy.name} โจมตีขณะดื่มยา ${edm} ดาเมจ!`,'damage');
+    if(G.hp<=0){loseGame();return;}setBattleActions();
   },600);
 }
-
 function doFlee(){
-  if(Math.random()<0.5){
-    G.inBattle=false;G.enemy=null;hideEnemy();
-    addMsg('🏃 หลบหนีสำเร็จ!','narrator');setZoneActions();
-  } else {
-    const dmg=G.enemy.atk;
-    G.hp=Math.max(0,G.hp-dmg);updateHUD();
-    addMsg(`❌ หลบหนีไม่สำเร็จ! โดนโจมตี ${dmg} ดาเมจ!`,'damage');
-    if(G.hp<=0){loseGame();return;}
-    setBattleActions();
-  }
+  if(Math.random()<0.5){G.inBattle=false;G.enemy=null;hideEnemy();addMsg('🏃 หลบหนีสำเร็จ!','narrator');setZoneActions();}
+  else{const dmg=G.enemy.atk;G.hp=Math.max(0,G.hp-dmg);updateHUD();addMsg(`❌ หลบหนีไม่สำเร็จ! โดนโจมตี ${dmg} ดาเมจ!`,'damage');if(G.hp<=0){loseGame();return;}setBattleActions();}
 }
-
 function winBattle(){
   G.inBattle=false;const e=G.enemy;G.enemy=null;hideEnemy();
-  G.xp+=e.xp;G.gold+=e.gold;G.items.dna_fragment++;
-  G.mp=Math.min(G.mpMax,G.mp+15);
+  G.xp+=e.xp;G.gold+=e.gold;G.items.dna_fragment++;G.mp=Math.min(G.mpMax,G.mp+15);G.battlesWon++;
+  sfxVictory();
   addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
   addMsg(`✨ XP +${e.xp} | 💰 +${e.gold} | 🧬 DNA Fragment +1`,'reward');
+  if(e.isFinal){
+    G.gameCleared=true;
+    setTimeout(showVictory,1500);return;
+  }
   updateHUD();updateSkillPanel();checkLevelUp();
   setTimeout(setZoneActions,600);
 }
-
 function loseGame(){
   G.inBattle=false;hideEnemy();clearMsgs();
   addMsg('💀 HP หมด! พ่ายแพ้...','damage');
-  addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง','narrator');
+  addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
   G.hp=Math.floor(G.hpMax*0.5);G.mp=Math.floor(G.mpMax*0.7);updateHUD();
   setTimeout(setZoneActions,1000);
 }
-
 function checkLevelUp(){
   while(G.xp>=G.xpMax){
     G.xp-=G.xpMax;G.lv++;G.xpMax=Math.floor(G.xpMax*1.4);
     G.hpMax+=20;G.hp=G.hpMax;G.mpMax+=10;G.mp=G.mpMax;
     Object.entries(SKILLS).forEach(([id,sk])=>{
       if(sk.lvReq&&G.lv>=sk.lvReq&&!G.skills.includes(id)){
-        G.skills.push(id);
-        addMsg(`⬆️ ทักษะใหม่: ${sk.icon} ${sk.name}!`,'reward');
+        G.skills.push(id);addMsg(`⬆️ ทักษะใหม่: ${sk.icon} ${sk.name}!`,'reward');
       }
     });
-    // Reset question queues on level up so new zone questions become available
-    G.questionQueue={0:[],1:[],2:[]};
+    G.questionQueue={0:[],1:[],2:[],3:[]};
+    sfxLevelUp();
     const banner=document.getElementById('lvBanner');
     document.getElementById('lvBannerSub').textContent=`ขึ้นสู่ Level ${G.lv}! HP และ MP เพิ่มขึ้น!`;
-    banner.classList.add('show');
-    setTimeout(()=>banner.classList.remove('show'),2500);
+    banner.classList.add('show');setTimeout(()=>banner.classList.remove('show'),2500);
     updateMapZones();updateSkillPanel();
   }
+}
+
+// ══════════════════════════════════════════
+//  VICTORY
+// ══════════════════════════════════════════
+function showVictory(){
+  sfxVictory();
+  const acc=G.totalCorrect+G.totalWrong>0?Math.round(G.totalCorrect/(G.totalCorrect+G.totalWrong)*100):0;
+  document.getElementById('victoryStats').innerHTML=`
+    <div class="vstat"><div class="vstat-val">Lv.${G.lv}</div><div class="vstat-lbl">เลเวลสุดท้าย</div></div>
+    <div class="vstat"><div class="vstat-val">${G.totalCorrect}</div><div class="vstat-lbl">ตอบถูก</div></div>
+    <div class="vstat"><div class="vstat-val" style="color:${acc>=70?'var(--green)':'var(--yellow)'">${acc}%</div><div class="vstat-lbl">ความแม่นยำ</div></div>
+    <div class="vstat"><div class="vstat-val">${G.battlesWon}</div><div class="vstat-lbl">ชนะศัตรู</div></div>
+    <div class="vstat"><div class="vstat-val">${G.gold}</div><div class="vstat-lbl">💰 Gold</div></div>
+    <div class="vstat"><div class="vstat-val">${G.items.dna_fragment}</div><div class="vstat-lbl">🧬 Fragment</div></div>
+  `;
+  document.getElementById('victoryScreen').classList.remove('hidden');
+}
+function restartGame(){
+  document.getElementById('victoryScreen').classList.add('hidden');
+  Object.assign(G,{lv:1,xp:0,xpMax:100,hp:100,hpMax:100,mp:50,mpMax:50,gold:0,zone:0,skills:['analyze','quiz_attack'],items:{potion:2,dna_fragment:0,antidote:0},inBattle:false,enemy:null,quizCallback:null,quizCorrect:false,quizTimeout:false,timerInterval:null,questionQueue:{0:[],1:[],2:[],3:[]},totalCorrect:0,totalWrong:0,battlesWon:0,gameCleared:false});
+  updateHUD();updateSkillPanel();updateMapZones();goZone(0);
 }
 
 // ══════════════════════════════════════════
@@ -1079,77 +931,83 @@ const ZONE_STORIES={
   0:[
     {type:'narrator',text:'📍 ยินดีต้อนรับสู่ <strong>ห้องสมุด DNA</strong> — ศูนย์กลางข้อมูลพันธุกรรมของ Bio-Sphere'},
     {type:'npc',text:'🔬 ดร. เฮลิกซ์: "ไวรัสกลายพันธุ์บุกเข้ามาแล้ว! ใช้ความรู้ DNA เอาชนะพวกมัน!"'},
-    {type:'npc',text:'💡 "จำไว้: DNA = Double Helix, A-T, G-C และ Central Dogma: DNA→RNA→Protein"'},
+    {type:'npc',text:'💡 "จำไว้: DNA = Double Helix | A-T | G-C | Central Dogma: DNA→RNA→Protein | Codon = mRNA 3 เบส"'},
   ],
   1:[
     {type:'narrator',text:'📍 คุณเข้าสู่ <strong>ห้องแล็บโครโมโซม</strong> — โครโมโซมกำลังกลายพันธุ์!'},
-    {type:'npc',text:'🧬 ดร. คาริโอ: "มนุษย์มีโครโมโซม 46 แท่ง! ต้องหยุดการกลายพันธุ์ด่วน!"'},
+    {type:'npc',text:'🧬 ดร. คาริโอ: "มนุษย์มีโครโมโซม 46 แท่ง! Mitosis vs Meiosis ต้องรู้ให้ชัด!"'},
+    {type:'npc',text:'⚠️ "Nondisjunction ทำให้เกิด Down syndrome (Trisomy 21)! ระวังให้ดี!"'},
   ],
   2:[
     {type:'narrator',text:'📍 คุณมาถึง <strong>ป้อมเมนเดล</strong> — หัวใจของการถ่ายทอดพันธุกรรม!'},
-    {type:'npc',text:'💀 บอสเมนเดล: "ฮ่าๆ! เจ้าจะชนะฉันได้ก็ต่อเมื่อเข้าใจกฎพันธุกรรมอย่างแท้จริง!"'},
+    {type:'npc',text:'🧪 ดร. เมนเดล-จูเนียร์: "Punnett Square, Codominance, X-linked — เตรียมตัวให้พร้อม!"'},
+    {type:'npc',text:'💀 บอสเมนเดล: "ฮ่าๆ! ถ้าเจ้าตอบ Dihybrid Cross ไม่ได้ ก็แพ้ฉัน!"'},
+  ],
+  3:[
+    {type:'narrator',text:'📍 ⚠️ คุณเข้าสู่ <strong>แดนมืด Mutation</strong> — อาณาจักรของการกลายพันธุ์!'},
+    {type:'npc',text:'👹 มิวแทนต์อสูร: "Zone นี้คือ ม.3 ระดับสูง! Point mutation, Frameshift, CRISPR — รู้ไหม?!"'},
+    {type:'narrator',text:'☠️ จักรพรรดิ์ Mutation รออยู่ที่ปลายทาง — เอาชนะได้เพื่อกอบกู้ Bio-Sphere!'},
+    {type:'npc',text:'💡 เคล็ดลับ: เรียนรู้ก่อนสู้ เพื่อรับ MP +5 และเตรียมพร้อมกับคำถามระดับบอส!'},
   ],
 };
-
 function setZoneActions(){
   const z=G.zone;
   const canBattle=(ENEMIES[z]||[]).length>0;
-  setActions([
+  const actions=[
     {icon:'⚔️',label:'ต่อสู้กับศัตรู',fn:'encounterEnemy()',disabled:!canBattle},
-    {icon:'📖',label:'เรียนรู้',fn:'openLearn()'},
+    {icon:'📖',label:'เรียนรู้ (+5MP)',fn:'openLearn()'},
     {icon:'💊',label:'ซื้อยา (20💰)',fn:'buyPotion()'},
-    {icon:'➡️',label:'โซนถัดไป',fn:'nextZone()',disabled:z>=2},
-  ]);
+  ];
+  if(z<3)actions.push({icon:'➡️',label:'โซนถัดไป',fn:'nextZone()',disabled:z>=3});
+  else actions.push({icon:'🏆',label:'ท้าบอสสุดท้าย!',fn:'fightFinalBoss()',disabled:G.lv<5});
+  setActions(actions);
 }
-
 function encounterEnemy(){
-  const pool=ENEMIES[G.zone]||ENEMIES[0];
+  const pool=(ENEMIES[G.zone]||ENEMIES[0]).filter(e=>!e.isFinal);
+  if(pool.length===0){fightFinalBoss();return;}
   startBattle({...pool[Math.floor(Math.random()*pool.length)]});
 }
-
+function fightFinalBoss(){
+  if(G.lv<5){addMsg('🔒 ต้องการ Lv.5 เพื่อท้าบอสสุดท้าย! สู้ศัตรูเพิ่มเพื่อเก็บ XP','damage');return;}
+  const boss=ENEMIES[3].find(e=>e.isFinal);
+  if(boss)startBattle({...boss});
+}
 function buyPotion(){
   if(G.gold<20){addMsg(`💰 Gold ไม่พอ! ต้องการ 20💰 (มี ${G.gold}💰)`,'damage');return;}
-  G.gold-=20;G.items.potion++;
-  addMsg(`💊 ซื้อยาสำเร็จ! (มี ${G.items.potion} ชิ้น)`,'reward');
-  updateHUD();updateSkillPanel();
+  G.gold-=20;G.items.potion++;addMsg(`💊 ซื้อยาสำเร็จ! (มี ${G.items.potion} ชิ้น)`,'reward');updateHUD();updateSkillPanel();
 }
-
 function nextZone(){
   const next=G.zone+1;
   if(next===1&&G.lv<2){addMsg('🔒 ต้องการ Lv.2 ก่อน! สู้ศัตรูเพิ่มเพื่อเก็บ XP','damage');return;}
   if(next===2&&G.lv<3){addMsg('🔒 ต้องการ Lv.3 ก่อน! สู้ศัตรูเพิ่มเพื่อเก็บ XP','damage');return;}
+  if(next===3&&G.lv<5){addMsg('🔒 ต้องการ Lv.5 ก่อน! สู้ศัตรูเพิ่มเพื่อเก็บ XP','damage');return;}
   goZone(next);
 }
-
 function goZone(idx){
   if(idx===1&&G.lv<2){addMsg('🔒 ต้องการ Lv.2 ก่อน!','damage');return;}
   if(idx===2&&G.lv<3){addMsg('🔒 ต้องการ Lv.3 ก่อน!','damage');return;}
-  if(idx>=3){addMsg('🔒 ยังไม่เปิด (Lv.5 ขึ้นไป)','damage');return;}
+  if(idx===3&&G.lv<5){addMsg('🔒 ต้องการ Lv.5 ก่อน! (แดนมืด Mutation)','damage');return;}
+  if(idx>3)return;
   G.zone=idx;G.inBattle=false;G.enemy=null;hideEnemy();clearMsgs();
-  // Close map on mobile after navigating
   const p=document.getElementById('mapPanel'),ov=document.getElementById('mapOverlay');
   if(window.innerWidth<=600){p.classList.remove('open');ov.classList.remove('show');}
-  updateMapZones();
+  playBGM(idx);updateMapZones();
   const story=ZONE_STORIES[idx]||[];
   story.forEach((s,i)=>setTimeout(()=>addMsg(s.text,s.type),i*400));
   setTimeout(setZoneActions,story.length*400+200);
 }
 
 // ══════════════════════════════════════════
-//  START GAME
+//  START
 // ══════════════════════════════════════════
 function startGame(){
   document.getElementById('titleScreen').classList.remove('active');
   document.getElementById('gameScreen').classList.add('active');
   updateHUD();updateSkillPanel();updateMapZones();goZone(0);
 }
-
-// Handle resize (desktop ↔ mobile)
 window.addEventListener('resize',()=>{
   const p=document.getElementById('mapPanel'),ov=document.getElementById('mapOverlay');
-  if(window.innerWidth>600){
-    p.classList.remove('open');ov.classList.remove('show');
-  }
+  if(window.innerWidth>600){p.classList.remove('open');ov.classList.remove('show');}
 });
 </script>
 </body>
