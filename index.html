@@ -1273,6 +1273,7 @@ async function renderHallOfFame(){
 }
 function restartGame(){
   document.getElementById('victoryScreen').classList.add('hidden');
+  loadTitleScoreboard();
   Object.assign(G,{lv:1,xp:0,xpMax:100,hp:100,hpMax:100,mp:50,mpMax:50,gold:0,zone:0,skills:['analyze','quiz_attack'],items:{potion:2,dna_fragment:0,antidote:0},inBattle:false,enemy:null,quizCallback:null,quizCorrect:false,quizTimeout:false,timerInterval:null,questionQueue:{0:[],1:[],2:[],3:[]},totalCorrect:0,totalWrong:0,battlesWon:0,gameCleared:false});
   updateHUD();updateSkillPanel();updateMapZones();goZone(0);
 }
@@ -1392,7 +1393,7 @@ async function saveStats(result){
   } catch(e){}
 }
 function showGameOver(){
-  saveStats('lose');
+  await saveStats('lose');
   G.inBattle = false;
   G.enemy = null;
   hideEnemy();
@@ -1415,6 +1416,7 @@ function showGameOver(){
 
 function restartFromGameover(){
   document.getElementById('gameoverScreen').classList.remove('show');
+  loadTitleScoreboard();
   Object.assign(G,{lv:1,xp:0,xpMax:100,hp:100,hpMax:100,mp:50,mpMax:50,gold:0,
     zone:0,skills:['analyze','quiz_attack'],items:{potion:2,dna_fragment:0,antidote:0},
     inBattle:false,enemy:null,quizCallback:null,quizCorrect:false,quizTimeout:false,
