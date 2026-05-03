@@ -863,7 +863,7 @@ function usePotion(){
   addMsg(`💊 ดื่มยา! ฟื้นฟู <strong style="color:var(--green)">${heal} HP</strong>`,'reward');
   updateSkillPanel();
   setTimeout(()=>{
-    if(!G.inBattle)return;const edm=G.enemy.atk+Math.floor(Math.random()*6);
+    if(!G.inBattle)return;const edm=5+Math.floor(Math.random()*2);
     G.hp=Math.max(0,G.hp-edm);updateHUD();addMsg(`⚡ ${G.enemy.name} โจมตีขณะดื่มยา ${edm} ดาเมจ!`,'damage');
     if(G.hp<=0){loseGame();return;}setBattleActions();
   },600);
