@@ -240,6 +240,22 @@ body{
     คุณคือ <strong>นักวิทยาศาสตร์รุ่นใหม่</strong> ที่ต้องออกผจญภัยใน 4 โซน
     ตอบคำถามพันธุศาสตร์เพื่อเอาชนะศัตรู และกอบกู้รหัส DNA ให้กลับคืนมา!
   </div>
+  <!-- SCOREBOARD PANEL -->
+<div id="titleScoreboard" style="
+  width:100%;max-width:480px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 16px;
+  margin-bottom:16px;
+">
+  <div style="font-family:'Prompt',sans-serif;font-size:0.75rem;font-weight:700;color:var(--yellow);letter-spacing:2px;margin-bottom:8px;text-align:center;">
+    🏆 SCOREBOARD
+  </div>
+  <div id="titleScoreList">
+    <div style="color:var(--dim);font-size:0.75rem;text-align:center;">กำลังโหลด...</div>
+  </div>
+</div>
   <input id="playerNameInput" type="text" maxlength="20" placeholder="ใส่ชื่อของคุณ..."
   style="padding:10px 20px;border-radius:50px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-size:0.95rem;font-family:'Sarabun',sans-serif;text-align:center;outline:none;width:260px;margin-bottom:12px;">
 <button class="btn-start" onclick="startGame()">⚔️ เริ่มผจญภัย</button>
@@ -619,7 +635,29 @@ function initParticles(){
   }
 }
 initParticles();
+async function loadTitleScoreboard(){
+  const el = document.getElementById('titleScoreList');
+  if(!el) return;
+  try {
+    const r = await window.storage.get('scoreboard', true);
+    if(!r){ el.innerHTML='<div style="color:var(--dim);font-size:0.75rem;text-align:center;">ยังไม่มีผู้เล่น</div>'; return; }
+    const all = JSON.parse(r.value);
+    const sorted = [...all].sort((a,b) => b.acc-a.acc || b.correct-a.correct || a.ts-b.ts);
+    el.innerHTML = sorted.slice(0,8).map((e,i) => `
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:3px;font-size:0.72rem;">
+        <span style="color:${i===0?'var(--yellow)':i===1?'#94a3b8':i===2?'#cd7c2f':'var(--dim)'};font-weight:700;width:20px;flex-shrink:0;">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+        <span style="flex:1;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.name}</span>
+        <span style="color:var(--cyan);font-weight:700">Lv.${e.lv}</span>
+        <span style="color:${e.acc>=70?'var(--green)':'var(--yellow)'};font-weight:700">${e.acc}%</span>
+        <span>${e.result==='win'?'🏆':'💀'}</span>
+      </div>`).join('');
+  } catch(e){
+    el.innerHTML='<div style="color:var(--dim);font-size:0.75rem;text-align:center;">โหลดไม่ได้</div>';
+  }
+}
 
+// เรียกทันทีตอนโหลดหน้า
+loadTitleScoreboard();
 // ══════════════════════════════════════════
 //  SCENE CANVAS
 // ══════════════════════════════════════════
@@ -1205,36 +1243,33 @@ async function showVictory(){
     <div class="vstat"><div class="vstat-val">${G.gold}</div><div class="vstat-lbl">💰 Gold</div></div>
     <div class="vstat"><div class="vstat-val">${G.items.dna_fragment}</div><div class="vstat-lbl">🧬 Fragment</div></div>
   `;
-  // บันทึกลง shared storage
-  const entry={name:G.name,lv:G.lv,acc,correct:G.totalCorrect,wrong:G.totalWrong,battles:G.battlesWon,date:new Date().toLocaleDateString('th-TH'),ts:Date.now()};
-  try{
-    const key='hof:'+Date.now()+':'+Math.random().toString(36).slice(2);
-    await window.storage.set(key,JSON.stringify(entry),true);
-  }catch(e){}
+await saveStats('win');
   // โหลดและแสดง Hall of Fame
   await renderHallOfFame();
   document.getElementById('victoryScreen').classList.remove('hidden');
 }
 
 async function renderHallOfFame(){
-  const hofEl=document.getElementById('hofList');if(!hofEl)return;
-  hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;">กำลังโหลด...</div>';
-  try{
-    const keys=await window.storage.list('hof:',true);
-    const entries=[];
-    for(const k of keys.keys){
-      try{const r=await window.storage.get(k,true);if(r)entries.push(JSON.parse(r.value));}catch(e){}
-    }
-    entries.sort((a,b)=>b.acc-a.acc||(b.correct-a.correct)||(a.ts-b.ts));
-    if(entries.length===0){hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;text-align:center;">ยังไม่มีข้อมูล</div>';return;}
-    hofEl.innerHTML=entries.slice(0,10).map((e,i)=>`
+  const hofEl = document.getElementById('hofList');
+  if(!hofEl) return;
+  hofEl.innerHTML = '<div style="color:var(--dim);font-size:0.75rem;">กำลังโหลด...</div>';
+  try {
+    const r = await window.storage.get('scoreboard', true);
+    if(!r){ hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;text-align:center;">ยังไม่มีข้อมูล</div>'; return; }
+    const all = JSON.parse(r.value);
+    // เรียงตาม acc → correct → เวลาเร็วสุด
+    const sorted = [...all].sort((a,b) => b.acc-a.acc || b.correct-a.correct || a.ts-b.ts);
+    hofEl.innerHTML = sorted.slice(0,10).map((e,i) => `
       <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:4px;font-size:0.75rem;">
         <span style="color:${i===0?'var(--yellow)':i===1?'#94a3b8':i===2?'#cd7c2f':'var(--dim)'};font-weight:700;width:18px;">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
         <span style="flex:1;font-weight:600;color:var(--text)">${e.name}</span>
         <span style="color:${e.acc>=70?'var(--green)':'var(--yellow)'};font-weight:700">${e.acc}%</span>
+        <span style="color:${e.result==='win'?'var(--green)':'var(--red)'};">${e.result==='win'?'🏆':'💀'}</span>
         <span style="color:var(--dim)">${e.date}</span>
       </div>`).join('');
-  }catch(e){hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;">โหลดไม่ได้</div>';}
+  } catch(e){
+    hofEl.innerHTML = '<div style="color:var(--dim);font-size:0.75rem;">โหลดไม่ได้</div>';
+  }
 }
 function restartGame(){
   document.getElementById('victoryScreen').classList.add('hidden');
@@ -1329,8 +1364,35 @@ function checkGameOver(){
   }
   return false;
 }
-
+async function saveStats(result){
+  const acc = G.totalCorrect+G.totalWrong > 0
+    ? Math.round(G.totalCorrect/(G.totalCorrect+G.totalWrong)*100) : 0;
+  const entry = {
+    name: G.name,
+    lv: G.lv,
+    acc,
+    correct: G.totalCorrect,
+    wrong: G.totalWrong,
+    battles: G.battlesWon,
+    result, // 'win' | 'lose' | 'quit'
+    date: new Date().toLocaleDateString('th-TH'),
+    ts: Date.now(),
+  };
+  try {
+    // โหลด array เดิม → push → save กลับ (1 key เดียว)
+    let all = [];
+    try {
+      const r = await window.storage.get('scoreboard', true);
+      if(r) all = JSON.parse(r.value);
+    } catch(e){}
+    all.push(entry);
+    // เก็บแค่ 200 รายการล่าสุด
+    if(all.length > 200) all = all.slice(-200);
+    await window.storage.set('scoreboard', JSON.stringify(all), true);
+  } catch(e){}
+}
 function showGameOver(){
+  saveStats('lose');
   G.inBattle = false;
   G.enemy = null;
   hideEnemy();
