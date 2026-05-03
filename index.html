@@ -1017,7 +1017,7 @@ function doQuizAttack(){
       const base=G.zone===3?40:28;
       const dmg=base+G.lv*8+Math.floor(Math.random()*12);
       G.enemy.hp=Math.max(0,G.enemy.hp-dmg);updateEnemyHP();
-      playBossAnim('hit');
+ playBossAnim('hit');
       floatNum(`-${dmg}`,'#f87171','enemyFighter');
       addMsg(`💥 ตอบถูก! โจมตี <strong style="color:var(--red)">${dmg} ดาเมจ</strong>!`,'player');
       if(G.enemy.hp<=0){winBattle();return;}
@@ -1025,6 +1025,7 @@ function doQuizAttack(){
         if(!G.inBattle||G.enemy.hp<=0)return;
         const edm=Math.floor(G.enemy.atk*1.0+Math.random()*8);
         G.hp=Math.max(0,G.hp-edm);updateHUD();
+      
         floatNum(`-${edm}`,'#22d3a0','playerFighter');
         addMsg(`⚡ ${G.enemy.name} โต้กลับ <strong style="color:var(--red)">${edm} ดาเมจ</strong>!`,'damage');
         if(G.hp<=0){loseGame();return;}setBattleActions();
@@ -1096,24 +1097,17 @@ function winBattle(){
   G.inBattle=false;const e=G.enemy;G.enemy=null;hideEnemy();
   G.xp+=e.xp;G.gold+=e.gold;G.items.dna_fragment++;G.mp=Math.min(G.mpMax,G.mp+15);G.battlesWon++;
 
-  const hasBossAnim = playBossAnim('dead', ()=>{
+  function onWinDone(){
     sfxVictory();
     addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
     addMsg(`✨ XP +${e.xp} | 💰 +${e.gold} | 🧬 DNA Fragment +1`,'reward');
-    if(e.isFinal){ G.gameCleared=true; setTimeout(showVictory,1500); return; }
-    updateHUD();updateSkillPanel();checkLevelUp();
-    setTimeout(setZoneActions,600);
-  });
-
-  // ศัตรูปกติ (ไม่มี pixel art) รันทันที
-  if(!hasBossAnim){
-    sfxVictory();
-    addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
-    addMsg(`✨ XP +${e.xp} | 💰 +${e.gold} | 🧬 DNA Fragment +1`,'reward');
-    if(e.isFinal){ G.gameCleared=true; setTimeout(showVictory,1500); return; }
+    if(e.isFinal){G.gameCleared=true;setTimeout(showVictory,1500);return;}
     updateHUD();updateSkillPanel();checkLevelUp();
     setTimeout(setZoneActions,600);
   }
+
+  const hasBossAnim=playBossAnim('dead',onWinDone);
+  if(!hasBossAnim) onWinDone();
 }
 function loseGame(){
   G.inBattle=false;hideEnemy();clearMsgs();
