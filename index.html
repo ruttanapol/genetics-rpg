@@ -440,7 +440,7 @@ function makeSynth(type,freq,duration,vol,detune=0,delay=0){
   try{
     const ac=getAC();
     if(ac.state==='suspended') ac.resume();
-    const now=ac.currentTime+delay;;const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);g.gain.exponentialRampToValueAtTime(0.001,now+duration);osc.connect(f);f.connect(g);g.connect(_masterGain);osc.start(now);osc.stop(now+duration+0.05);}catch(e){}}
+    const now=ac.currentTime+delay;const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);g.gain.exponentialRampToValueAtTime(0.001,now+duration);osc.connect(f);f.connect(g);g.connect(_masterGain);osc.start(now);osc.stop(now+duration+0.05);}catch(e){}}
 function playBGM(zone){stopBGM();if(!G.musicOn)return;const ac=getAC();if(ac.state==='suspended')ac.resume();const data=BGM[zone]||BGM[0];const beat=60/data.bpm;function loopMelody(st,idx){if(!G.musicOn)return;const note=data.melody[idx%data.melody.length];makeSynth('triangle',note[0],note[1]*beat*0.85,0.18,0,st-ac.currentTime);makeSynth('sine',note[0]*1.5,note[1]*beat*0.7,0.06,0,st-ac.currentTime);const next=st+note[1]*beat;const t=setTimeout(()=>loopMelody(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}function loopBass(st,idx){if(!G.musicOn)return;const freq=data.bass[idx%data.bass.length];makeSynth('sawtooth',freq,beat*1.8,0.12,-10,st-ac.currentTime);const next=st+beat*2;const t=setTimeout(()=>loopBass(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}function loopPad(st,idx){if(!G.musicOn)return;const freq=data.pad[idx%data.pad.length];makeSynth('sine',freq,beat*3.8,0.08,0,st-ac.currentTime);const next=st+beat*4;const t=setTimeout(()=>loopPad(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}const now=ac.currentTime+0.05;loopMelody(now,0);loopBass(now,0);loopPad(now,0);}
 function stopBGM(){_bgmNodes.forEach(t=>clearTimeout(t));_bgmNodes=[];}
 function toggleMusic(){G.musicOn=!G.musicOn;const btn=document.getElementById('musicBtn');if(G.musicOn){playBGM(G.zone);if(btn)btn.textContent='🔊';}else{stopBGM();if(btn)btn.textContent='🔇';}}
@@ -787,7 +787,9 @@ function continueAfterQuiz(){
   clearInterval(G.timerInterval);
   G.timerInterval = null;
   document.getElementById('quizModal').classList.add('hidden');
-  if(G.quizCallback) G.quizCallback(G.quizCorrect);
+  const cb = G.quizCallback;
+  G.quizCallback = null;
+  if(cb) cb(G.quizCorrect);
 }
 
 // ══════════════════════════════════════════
@@ -1050,9 +1052,9 @@ function setBattleActions(){
   if(hasGenomeBlast)actions.push({icon:'💥',label:'จีโนมบลาสต์',fn:'doGenomeBlast()',cost:25,disabled:G.mp<25});
   actions.push({icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0});
   actions.push({icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true});
-  ssetActions(actions.slice(0,6));
   const canAct = G.mp >= 5 || G.items.potion > 0;
   if(!canAct){ showGameOver(); return; }
+   setActions(actions.slice(0,6));
 }
 function doQuizAttack(){
   if(G.mp<10)return;G.mp=Math.max(0,G.mp-10);updateHUD();
@@ -1170,6 +1172,7 @@ function loseGame(){
     addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
     setTimeout(setZoneActions,1000);
   }
+}
 function checkLevelUp(){
   while(G.xp>=G.xpMax){
     G.xp-=G.xpMax;G.lv++;G.xpMax=Math.floor(G.xpMax*1.4);
