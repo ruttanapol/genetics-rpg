@@ -1130,11 +1130,15 @@ function winBattle(){
 function loseGame(){
   G.inBattle=false;hideEnemy();clearMsgs();
   addMsg('💀 HP หมด! พ่ายแพ้...','damage');
-  G.hp=Math.floor(G.hpMax*0.5);G.mp=Math.floor(G.mpMax*0.7);updateHUD();
-  // ตรวจ game over ก่อน
+  // ตรวจ game over ก่อน reset
   if(checkGameOver()) return;
+  // ถ้าไม่ game over จึง reset
+  G.hp=Math.floor(G.hpMax*0.5);
+  G.mp=Math.floor(G.mpMax*0.7);
+  updateHUD();
   addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
   setTimeout(setZoneActions,1000);
+
 }
 function checkLevelUp(){
   while(G.xp>=G.xpMax){
@@ -1248,13 +1252,7 @@ function goZone(idx){
   story.forEach((s,i)=>setTimeout(()=>addMsg(s.text,s.type),i*400));
   setTimeout(setZoneActions,story.length*400+200);
 }
-<!-- GAME OVER SCREEN -->
-<div class="gameover-screen" id="gameoverScreen">
-  <div class="gameover-title">GAME OVER</div>
-  <div class="gameover-sub" id="gameoverSub">MP หมด — ไม่สามารถสู้ต่อได้!</div>
-  <div class="gameover-stats" id="gameoverStats"></div>
-  <button class="btn-start gameover-btn" onclick="restartFromGameover()" style="animation:none;">🔄 เริ่มใหม่</button>
-</div>
+
   // ══════════════════════════════════════════
 //  GAME OVER SYSTEM
 // ══════════════════════════════════════════
@@ -1313,5 +1311,12 @@ window.addEventListener('resize',()=>{
   if(window.innerWidth>600){p.classList.remove('open');ov.classList.remove('show');}
 });
 </script>
+  <!-- GAME OVER SCREEN -->
+<div class="gameover-screen" id="gameoverScreen">
+  <div class="gameover-title">GAME OVER</div>
+  <div class="gameover-sub" id="gameoverSub">MP หมด — ไม่สามารถสู้ต่อได้!</div>
+  <div class="gameover-stats" id="gameoverStats"></div>
+  <button class="btn-start gameover-btn" onclick="restartFromGameover()" style="animation:none;">🔄 เริ่มใหม่</button>
+</div>
 </body>
 </html>
