@@ -477,6 +477,12 @@ const ALL_QUESTIONS = [
   {z:1,q:'ใน Mitosis ระยะใดที่โครโมโซมเรียงแถวกลางเซลล์?',opts:['Prophase','Metaphase','Anaphase','Telophase'],ans:1,dmg:40,exp:'Metaphase คือระยะที่โครโมโซมเรียงตัวที่กึ่งกลางเซลล์ (Metaphase Plate) และมองเห็นโครโมโซมได้ชัดที่สุด'},
   {z:1,q:'Klinefelter syndrome (47,XXY) ส่งผลอย่างไร?',opts:['ผู้หญิงเตี้ย','ผู้ชายมีอัณฑะฝ่อ/มีนมขนาดใหญ่','ทารกพิการแต่กำเนิด','ไม่มีผลใดๆ'],ans:1,dmg:44,exp:'Klinefelter syndrome เกิดในผู้ชาย (XXY) มีอัณฑะเล็ก ผลิตอสุจิน้อย อาจมีหน้าอกใหญ่กว่าปกติ'},
   {z:1,q:'โครมาทิด (Chromatid) คืออะไร?',opts:['โครโมโซมแต่ละแท่ง','ครึ่งหนึ่งของโครโมโซมที่จำลองแล้ว','เซนโทรเมียร์','DNA ที่ยังไม่ขดตัว'],ans:1,dmg:42,exp:'Sister Chromatid คือสำเนาของโครโมโซมที่ยึดกันที่ Centromere หลัง Replication ก่อนแยกออกจากกันใน Anaphase'},
+  // ── ZONE 1 MATCHING (เพิ่มใหม่) ──
+  {z:1,q:'จับคู่: โรค "ดาวน์ซินโดรม" ตรงกับโครโมโซมใด?',opts:['Trisomy 21 (47,+21)','Trisomy 18 (47,+18)','Monosomy X (45,X)','Trisomy 13 (47,+13)'],ans:0,dmg:40,exp:'Down syndrome = Trisomy 21 มีโครโมโซมคู่ที่ 21 จำนวน 3 แท่ง พบบ่อยที่สุดในกลุ่ม Trisomy'},
+  {z:1,q:'จับคู่: "Turner syndrome" ตรงกับ Karyotype ใด?',opts:['47,XXY','45,X','47,XXX','46,XY'],ans:1,dmg:42,exp:'Turner syndrome = 45,X พบในผู้หญิง มีโครโมโซม X เพียงตัวเดียว ทำให้เตี้ยและไม่มีประจำเดือน'},
+  {z:1,q:'จับคู่: ระยะ "Metaphase" ตรงกับเหตุการณ์ใด?',opts:['โครโมโซมขดตัวเริ่มต้น','โครโมโซมเรียงกลางเซลล์','โครโมโซมแยกไปขั้ว','เซลล์แบ่งออกเป็นสอง'],ans:1,dmg:40,exp:'Metaphase = โครโมโซมเรียงตัวที่ Metaphase Plate กึ่งกลางเซลล์ มองเห็นชัดที่สุด เหมาะแก่การทำ Karyotype'},
+  {z:1,q:'จับคู่: "Meiosis" ตรงกับผลลัพธ์ใด?',opts:['2 เซลล์ (2n)','4 เซลล์ (n)','2 เซลล์ (n)','4 เซลล์ (2n)'],ans:1,dmg:42,exp:'Meiosis ได้ 4 เซลล์ แต่ละเซลล์มีโครโมโซมครึ่งชุด (n=23) เพื่อใช้เป็นเซลล์สืบพันธุ์'},
+  {z:1,q:'จับคู่: "Crossing Over" เกิดในระยะใดของ Meiosis?',opts:['Metaphase I','Anaphase II','Prophase I','Telophase I'],ans:2,dmg:44,exp:'Crossing Over เกิดใน Prophase I ของ Meiosis I โฮโมโลกัสโครโมโซมแลกเปลี่ยนชิ้นส่วน สร้างความหลากหลาย'},
 
   // ── ZONE 2: พันธุกรรมเมนเดล ── 14 ข้อ
   {z:2,q:'Rr × Rr อัตราส่วนฟีโนไทป์คือ?',opts:['1:1','2:1','3:1','4:0'],ans:2,dmg:50,exp:'Rr × Rr → RR(1):Rr(2):rr(1) ฟีโนไทป์เด่น:ด้อย = 3:1 ตามกฎการแยก (Law of Segregation) ของเมนเดล'},
@@ -523,11 +529,12 @@ const LEARN_TIPS = {
     {title:'RNA 3 ชนิด',tag:'ประเภท',text:'mRNA (messenger) นำรหัสออกจากนิวเคลียส | tRNA (transfer) นำกรดอะมิโน | rRNA (ribosomal) เป็นส่วนประกอบของไรโบโซม'},
     {title:'Codon & Anticodon',tag:'Translation',text:'Codon = mRNA 3 เบส กำหนดกรดอะมิโน | Anticodon = tRNA 3 เบส จับคู่กับ codon | Start codon = AUG | Stop codon = UAA, UAG, UGA'},
   ],
-  1:[
+   1:[
     {title:'โครโมโซมมนุษย์',tag:'ตัวเลข',text:'มนุษย์มี 46 แท่ง (23 คู่) — คู่ที่ 1-22 เป็น Autosome และคู่ที่ 23 เป็นโครโมโซมเพศ (XX หรือ XY)'},
     {title:'Karyotype',tag:'การตรวจ',text:'Karyotype คือการถ่ายภาพและจัดเรียงโครโมโซม ใช้ตรวจความผิดปกติ เช่น Down syndrome (47,+21), Turner (45,X), Klinefelter (47,XXY)'},
     {title:'Mitosis vs Meiosis',tag:'เปรียบเทียบ',text:'Mitosis: 2n→2n, ได้ 2 เซลล์เหมือนเดิม, ใช้เจริญเติบโต\nMeiosis: 2n→n, ได้ 4 เซลล์ครึ่งชุด, ใช้สร้างเซลล์สืบพันธุ์'},
-    {title:'ความผิดปกติโครโมโซม',tag:'โรค',text:'Down (Trisomy 21) | Patau (Trisomy 13) | Edwards (Trisomy 18) | Turner (45,X) | Klinefelter (47,XXY) | Triple X (47,XXX)'},
+    {title:'ความผิดปกติโครโมโซม — จับคู่ให้แม่น',tag:'โรค + Matching',text:'Down = Trisomy 21 (47,+21)\nEdwards = Trisomy 18\nPatau = Trisomy 13\nTurner = 45,X (ผู้หญิง)\nKlinefelter = 47,XXY (ผู้ชาย)\nTriple X = 47,XXX'},
+    {title:'ระยะ Mitosis — จับคู่ให้ถูก',tag:'Matching',text:'Prophase = โครโมโซมขดตัว\nMetaphase = เรียงกลางเซลล์ (ทำ Karyotype)\nAnaphase = แยกไปขั้ว\nTelophase = เซลล์คอดแบ่ง'},
     {title:'Crossing Over & Nondisjunction',tag:'ความหลากหลาย',text:'Crossing Over ใน Prophase I → ความหลากหลายทางพันธุกรรม\nNondisjunction → โครโมโซมเกิน/ขาด → Trisomy/Monosomy'},
   ],
   2:[
