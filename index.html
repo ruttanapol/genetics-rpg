@@ -246,7 +246,7 @@ body{
   <div style="margin-top:24px;font-size:0.75rem;color:#475569;letter-spacing:1.5px;text-transform:uppercase;">
     Created by <span style="color:var(--cyan);font-weight:700;letter-spacing:2px;">Kru Rattanapol</span>
     <span style="color:#334155;margin:0 8px;">|</span>
-    <span style="color:#64748b;">v2.0 — 55 Questions · 4 Zones</span>
+    <span style="color:#64748b;">v2.0 — 59 Questions · 4 Zones</span>
   </div>
 </div>
 
@@ -436,7 +436,11 @@ const BGM={
   3:{bpm:148,melody:[[466,0.2],[440,0.2],[392,0.4],[440,0.2],[466,0.2],[523,0.4],[494,0.2],[466,0.2],[440,0.4],[392,0.2],[370,0.2],[349,0.8]],bass:[155,175,196,155],pad:[155,196,233,175]},
 };
 function getAC(){if(!_ac){_ac=new(window.AudioContext||window.webkitAudioContext)();_masterGain=_ac.createGain();_masterGain.gain.value=0.28;_masterGain.connect(_ac.destination);}return _ac;}
-function makeSynth(type,freq,duration,vol,detune=0,delay=0){try{const ac=getAC(),now=ac.currentTime+delay;const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);g.gain.exponentialRampToValueAtTime(0.001,now+duration);osc.connect(f);f.connect(g);g.connect(_masterGain);osc.start(now);osc.stop(now+duration+0.05);}catch(e){}}
+function makeSynth(type,freq,duration,vol,detune=0,delay=0){
+  try{
+    const ac=getAC();
+    if(ac.state==='suspended') ac.resume();
+    const now=ac.currentTime+delay;;const osc=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();osc.type=type;osc.frequency.value=freq;osc.detune.value=detune;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+0.02);g.gain.exponentialRampToValueAtTime(0.001,now+duration);osc.connect(f);f.connect(g);g.connect(_masterGain);osc.start(now);osc.stop(now+duration+0.05);}catch(e){}}
 function playBGM(zone){stopBGM();if(!G.musicOn)return;const ac=getAC();if(ac.state==='suspended')ac.resume();const data=BGM[zone]||BGM[0];const beat=60/data.bpm;function loopMelody(st,idx){if(!G.musicOn)return;const note=data.melody[idx%data.melody.length];makeSynth('triangle',note[0],note[1]*beat*0.85,0.18,0,st-ac.currentTime);makeSynth('sine',note[0]*1.5,note[1]*beat*0.7,0.06,0,st-ac.currentTime);const next=st+note[1]*beat;const t=setTimeout(()=>loopMelody(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}function loopBass(st,idx){if(!G.musicOn)return;const freq=data.bass[idx%data.bass.length];makeSynth('sawtooth',freq,beat*1.8,0.12,-10,st-ac.currentTime);const next=st+beat*2;const t=setTimeout(()=>loopBass(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}function loopPad(st,idx){if(!G.musicOn)return;const freq=data.pad[idx%data.pad.length];makeSynth('sine',freq,beat*3.8,0.08,0,st-ac.currentTime);const next=st+beat*4;const t=setTimeout(()=>loopPad(next,idx+1),(next-ac.currentTime)*1000-40);_bgmNodes.push(t);}const now=ac.currentTime+0.05;loopMelody(now,0);loopBass(now,0);loopPad(now,0);}
 function stopBGM(){_bgmNodes.forEach(t=>clearTimeout(t));_bgmNodes=[];}
 function toggleMusic(){G.musicOn=!G.musicOn;const btn=document.getElementById('musicBtn');if(G.musicOn){playBGM(G.zone);if(btn)btn.textContent='🔊';}else{stopBGM();if(btn)btn.textContent='🔇';}}
@@ -478,7 +482,7 @@ const ENEMIES = {
 };
 
 // ══════════════════════════════════════════
-//  55 QUESTIONS — z0:14, z1:13, z2:14, z3:14
+//  59 QUESTIONS — z0:14, z1:18, z2:14, z3:14
 // ══════════════════════════════════════════
 const ALL_QUESTIONS = [
   // ── ZONE 0: DNA พื้นฐาน ── 14 ข้อ
@@ -734,6 +738,7 @@ let quizTimeLeft=25;
 let _quizState={newAns:0,exp:'',dmg:0};
 function openQuiz(onDone){
   clearInterval(G.timerInterval);
+  G.timerInterval = null;
   const q=getNextQuestion(G.zone);
   G.quizCallback=onDone;G.quizCorrect=false;
   document.getElementById('qTitle').textContent=G.zone===3?'☠️ คำถามระดับบอส':'⚔️ คำถามพันธุศาสตร์';
@@ -779,9 +784,10 @@ function answerQuiz(chosen,correct,exp,dmg){
   document.getElementById('quizContinue').className='quiz-continue show';
 }
 function continueAfterQuiz(){
-  clearInterval(G.timerInterval); // เพิ่มบรรทัดนี้
+  clearInterval(G.timerInterval);
+  G.timerInterval = null;
   document.getElementById('quizModal').classList.add('hidden');
-  if(G.quizCallback)G.quizCallback(G.quizCorrect);
+  if(G.quizCallback) G.quizCallback(G.quizCorrect);
 }
 
 // ══════════════════════════════════════════
@@ -1044,9 +1050,9 @@ function setBattleActions(){
   if(hasGenomeBlast)actions.push({icon:'💥',label:'จีโนมบลาสต์',fn:'doGenomeBlast()',cost:25,disabled:G.mp<25});
   actions.push({icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0});
   actions.push({icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true});
-  setActions(actions.slice(0,6));
+  ssetActions(actions.slice(0,6));
   const canAct = G.mp >= 5 || G.items.potion > 0;
-if(!canAct) checkGameOver();
+  if(!canAct){ showGameOver(); return; }
 }
 function doQuizAttack(){
   if(G.mp<10)return;G.mp=Math.max(0,G.mp-10);updateHUD();
@@ -1131,6 +1137,7 @@ function usePotion(){
   },600);
 }
 function doFlee(){
+  if(!G.inBattle) return;
   if(Math.random()<0.5){G.inBattle=false;G.enemy=null;hideEnemy();addMsg('🏃 หลบหนีสำเร็จ!','narrator');setZoneActions();}
   else{const dmg=G.enemy.atk;G.hp=Math.max(0,G.hp-dmg);updateHUD();addMsg(`❌ หลบหนีไม่สำเร็จ! โดนโจมตี ${dmg} ดาเมจ!`,'damage');if(G.hp<=0){loseGame();return;}setBattleActions();}
 }
@@ -1143,8 +1150,9 @@ function winBattle(){
     addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
     addMsg(`✨ XP +${e.xp} | 💰 +${e.gold} | 🧬 DNA Fragment +1`,'reward');
     if(e.isFinal){G.gameCleared=true;setTimeout(showVictory,1500);return;}
-    updateHUD();updateSkillPanel();checkLevelUp();
-    setTimeout(setZoneActions,600);
+    updateHUD(); updateSkillPanel(); checkLevelUp();
+  updateMapZones();
+  setTimeout(setZoneActions, 600);
   }
 
   const hasBossAnim=playBossAnim('dead',onWinDone);
@@ -1154,15 +1162,14 @@ function loseGame(){
   G.inBattle=false;hideEnemy();clearMsgs();
   addMsg('💀 HP หมด! พ่ายแพ้...','damage');
   // ตรวจ game over ก่อน reset
-  if(checkGameOver()) return;
-  // ถ้าไม่ game over จึง reset
-  G.hp=Math.floor(G.hpMax*0.5);
-  G.mp=Math.floor(G.mpMax*0.7);
-  updateHUD();
-  addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
-  setTimeout(setZoneActions,1000);
-
-}
+   if(checkGameOver()) return;
+  else {
+    G.hp=Math.floor(G.hpMax*0.5);
+    G.mp=Math.floor(G.mpMax*0.7);
+    updateHUD();
+    addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
+    setTimeout(setZoneActions,1000);
+  }
 function checkLevelUp(){
   while(G.xp>=G.xpMax){
     G.xp-=G.xpMax;G.lv++;G.xpMax=Math.floor(G.xpMax*1.4);
