@@ -649,7 +649,8 @@ function updateSkillPanel(){
   const list=document.getElementById('skillList');if(!list)return;
   list.innerHTML=Object.entries(SKILLS).map(([id,sk])=>{
     const learned=G.skills.includes(id);
-    return `<div class="skill-item ${learned?'learned':'locked'}"><span class="skill-icon">${sk.icon}</span><span class="skill-name">${sk.name}</span><span class="skill-badge ${learned?'badge-learned':'badge-locked'}">${learned?'✓':sk.lvReq?`Lv${sk.lvReq}`:'?'}</span></div>`;
+    return `<div class="vstat-val" style="color:${acc>=70?'var(--green)':'var(--yellow)'}">${acc}%</div>`
+// เพิ่ม } ปิด template expression ก่อน >
   }).join('');
   const items=document.getElementById('itemList');if(items)items.innerHTML=`
     <div class="item-row">💊 ยาฟื้น HP <span class="item-count">×${G.items.potion}</span></div>
