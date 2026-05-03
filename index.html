@@ -204,6 +204,9 @@ body{
 .drop-title{font-family:'Prompt',sans-serif;font-size:1.1rem;font-weight:900;color:var(--yellow);margin-bottom:4px;}
 .drop-body{font-size:0.88rem;color:var(--text);}
 
+/* PIXEL BOSS CANVAS */
+.boss-canvas-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;}
+#bossPixelCanvas{image-rendering:pixelated;image-rendering:crisp-edges;}  
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(100,200,255,0.2);border-radius:2px;}
@@ -415,7 +418,7 @@ function sfxVictory(){try{[523,659,784,659,784,1047,1319].forEach((f,i)=>makeSyn
 const SKILLS = {
   analyze:      {name:'วิเคราะห์ DNA',icon:'🔍',cost:5,learned:true},
   quiz_attack:  {name:'ตอบคำถาม!',icon:'❓',cost:10,learned:true},
-  gene_shield:  {name:'โล่จีน',icon:'🛡️',cost:15,learned:false,lvReq:2},
+  gene_shield:  {name:'โล่',icon:'🛡️',cost:15,learned:false,lvReq:2},
   rna_heal:     {name:'RNA รักษา',icon:'💊',cost:12,learned:false,lvReq:2},
   mutation_ray: {name:'รังสีมิวเทชัน',icon:'☢️',cost:20,learned:false,lvReq:3},
   genome_blast: {name:'จีโนมบลาสต์',icon:'💥',cost:25,learned:false,lvReq:5},
@@ -643,8 +646,10 @@ function showEnemy(e){
   document.getElementById('enemyName').textContent=e.name;
   document.getElementById('enemySprite').textContent=e.sprite;
   document.getElementById('enemyFighterHP').style.width='100%';
+  createBossCanvas(e);
 }
-function hideEnemy(){document.getElementById('enemyFighter').style.display='none';}
+function hideEnemy(){document.getElementById('enemyFighter').style.display='none';
+  removeBossCanvas();}
 function updateEnemyHP(){if(!G.enemy)return;document.getElementById('enemyFighterHP').style.width=Math.max(0,G.enemy.hp/G.enemy.maxHp*100)+'%';}
 function floatNum(text,color,targetId){
   const el=document.createElement('div');el.className='float-num';el.textContent=text;el.style.color=color;
@@ -756,10 +761,224 @@ function closeLearn(){
   document.getElementById('learnModal').classList.add('hidden');
   if(G.inBattle)setBattleActions();else setZoneActions();
 }
+// ══════════════════════════════════════════
+//  PIXEL BOSS SYSTEM
+// ══════════════════════════════════════════
+const BOSS_PIXELS = {
+  // ☠️ จักรพรรดิ์ Mutation — 16x16
+  final: [
+    '....BBBBBBBB....',
+    '...B........B...',
+    '..B..R....R..B..',
+    '..B...RRRR...B..',
+    '..B..........B..',
+    '...B.PPPPPP.B...',
+    '....BBBBBBBB....',
+    '...BDDDDDDDB....',
+    '..BDDDDDDDDB....',
+    '..BD..DD..DB....',
+    '..B...DD...B....',
+    '...B..DD..B.....',
+    '....BB..BB......',
+    '....B....B......',
+    '...BB....BB.....',
+    '..BB......BB....',
+  ],
+  // 💀 บอสเมนเดล — 16x16
+  boss: [
+    '....GGGGGGGG....',
+    '...G........G...',
+    '..G..Y....Y..G..',
+    '..G...YYYY...G..',
+    '..G..........G..',
+    '...G.WWWWWW.G...',
+    '....GGGGGGGG....',
+    '...GDDDDDDDDG...',
+    '..GDDDDDDDDG....',
+    '..GD..DD..DG....',
+    '..G...DD...G....',
+    '...G..DD..G.....',
+    '....GG..GG......',
+    '....G....G......',
+    '...GG....GG.....',
+    '..GG......GG....',
+  ],
+};
 
+const PIXEL_COLORS = {
+  B:'#dc2626', R:'#ff4444', P:'#c084fc', D:'#991b1b',  // final boss
+  G:'#854d0e', Y:'#fbbf24', W:'#fff',                   // boss เมนเดล
+  '.':null,
+};
+
+let _bossAnim = {
+  state:'idle',    // idle | attack | hit | dead
+  frame:0,
+  tick:0,
+  offsetY:0,
+  offsetX:0,
+  alpha:1,
+  flashOn:false,
+  deadParticles:[],
+  done:false,
+  onDone:null,
+};
+let _bossAnimRAF = null;
+
+function getBossPixels(enemy){
+  if(enemy&&enemy.isFinal) return BOSS_PIXELS.final;
+  if(enemy&&enemy.isBoss)  return BOSS_PIXELS.boss;
+  return null;
+}
+
+function createBossCanvas(enemy){
+  // ลบ canvas เก่าถ้ามี
+  const old = document.getElementById('bossPixelCanvas');
+  if(old) old.parentElement.remove();
+
+  const pixels = getBossPixels(enemy);
+  if(!pixels) return; // ศัตรูปกติไม่มี pixel art
+
+  const SCALE = 4;
+  const W = pixels[0].length * SCALE;
+  const H = pixels.length * SCALE;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'boss-canvas-wrap';
+  wrap.style.cssText = `position:absolute;right:24px;bottom:8px;`;
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'bossPixelCanvas';
+  canvas.width = W; canvas.height = H;
+  canvas.style.width  = W+'px';
+  canvas.style.height = H+'px';
+
+  wrap.appendChild(canvas);
+  document.getElementById('battleArea').appendChild(wrap);
+
+  // ซ่อน emoji sprite ของบอส
+  document.getElementById('enemySprite').style.display = 'none';
+
+  _bossAnim = {state:'idle',frame:0,tick:0,offsetY:0,offsetX:0,alpha:1,flashOn:false,deadParticles:[],done:false,onDone:null};
+  cancelAnimationFrame(_bossAnimRAF);
+  animateBoss(pixels, canvas, SCALE);
+}
+
+function drawBossFrame(pixels, ctx, scale, opts={}){
+  const {offsetY=0, offsetX=0, alpha=1, flashOn=false} = opts;
+  ctx.clearRect(0,0,ctx.canvas.width+20,ctx.canvas.height+20);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(offsetX, offsetY);
+  for(let r=0;r<pixels.length;r++){
+    for(let c=0;c<pixels[r].length;c++){
+      const ch = pixels[r][c];
+      if(ch==='.') continue;
+      let color = PIXEL_COLORS[ch] || '#fff';
+      if(flashOn) color = '#ffffff';
+      ctx.fillStyle = color;
+      ctx.fillRect(c*scale, r*scale, scale, scale);
+    }
+  }
+  ctx.restore();
+}
+
+function animateBoss(pixels, canvas, scale){
+  const ctx = canvas.getContext('2d');
+  const a = _bossAnim;
+
+  function loop(){
+    a.tick++;
+
+    if(a.state === 'idle'){
+      // ลอยขึ้นลงช้าๆ
+      a.offsetY = Math.sin(a.tick * 0.06) * 5;
+      drawBossFrame(pixels, ctx, scale, {offsetY: a.offsetY});
+
+    } else if(a.state === 'attack'){
+      // พุ่งเข้าหาผู้เล่น (เลื่อนซ้าย แล้วกลับ)
+      if(a.frame < 8)       a.offsetX = -a.frame * 7;
+      else if(a.frame < 16) a.offsetX = -(16-a.frame) * 7;
+      else { a.offsetX=0; a.state='idle'; a.frame=0; if(a.onDone){a.onDone();a.onDone=null;} }
+      drawBossFrame(pixels, ctx, scale, {offsetX: a.offsetX, offsetY: a.offsetY});
+      a.frame++;
+
+    } else if(a.state === 'hit'){
+      // กระตุก + flash สีขาว
+      a.flashOn = (a.frame % 2 === 0);
+      a.offsetX  = (a.frame % 2 === 0) ? 6 : -6;
+      if(a.frame >= 8){ a.offsetX=0; a.flashOn=false; a.state='idle'; a.frame=0; if(a.onDone){a.onDone();a.onDone=null;} }
+      drawBossFrame(pixels, ctx, scale, {offsetX: a.offsetX, flashOn: a.flashOn, offsetY: a.offsetY});
+      a.frame++;
+
+    } else if(a.state === 'dead'){
+      // สลายตัว — pixel ร่วงลง
+      if(a.frame === 0){
+        // สร้าง particle จาก pixel
+        a.deadParticles = [];
+        for(let r=0;r<pixels.length;r++){
+          for(let c=0;c<pixels[r].length;c++){
+            const ch = pixels[r][c];
+            if(ch==='.') continue;
+            a.deadParticles.push({
+              x: c*scale, y: r*scale,
+              vx: (Math.random()-0.5)*4,
+              vy: -(Math.random()*3+1),
+              color: PIXEL_COLORS[ch]||'#fff',
+              alpha:1,
+            });
+          }
+        }
+      }
+      ctx.clearRect(0,0,canvas.width+20,canvas.height+20);
+      let allGone = true;
+      for(const p of a.deadParticles){
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.vy += 0.25; // gravity
+        p.alpha -= 0.025;
+        if(p.alpha > 0){
+          allGone = false;
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, scale, scale);
+          ctx.restore();
+        }
+      }
+      a.frame++;
+      if(allGone || a.frame > 120){
+        a.done = true;
+        canvas.parentElement.remove();
+        document.getElementById('enemySprite').style.display = '';
+        if(a.onDone){a.onDone();a.onDone=null;}
+        return; // หยุด loop
+      }
+    }
+
+    _bossAnimRAF = requestAnimationFrame(loop);
+  }
+  _bossAnimRAF = requestAnimationFrame(loop);
+}
+
+function playBossAnim(state, onDone=null){
+  if(!document.getElementById('bossPixelCanvas')) return false;
+  _bossAnim.state  = state;
+  _bossAnim.frame  = 0;
+  _bossAnim.onDone = onDone;
+  return true;
+}
+
+function removeBossCanvas(){
+  cancelAnimationFrame(_bossAnimRAF);
+  const c = document.getElementById('bossPixelCanvas');
+  if(c) c.parentElement.remove();
+  document.getElementById('enemySprite').style.display = '';
+}
 // ══════════════════════════════════════════
 //  BATTLE SYSTEM
 // ══════════════════════════════════════════
+
 function startBattle(enemy){
   G.inBattle=true;G.enemy={...enemy};
   showEnemy(G.enemy);clearMsgs();
@@ -783,7 +1002,7 @@ function setBattleActions(){
     {icon:'❓',label:'ตอบคำถาม',fn:'doQuizAttack()',cost:10,disabled:G.mp<10},
     {icon:'🔍',label:'วิเคราะห์',fn:'doAnalyze()',cost:5,disabled:G.mp<5},
   ];
-  if(hasGeneShield)actions.push({icon:'🛡️',label:'โล่จีน',fn:'doGeneShield()',cost:15,disabled:G.mp<15});
+  if(hasGeneShield)actions.push({icon:'🛡️',label:'โล่',fn:'doGeneShield()',cost:15,disabled:G.mp<15});
   if(hasMutationRay)actions.push({icon:'☢️',label:'รังสีมิวเทชัน',fn:'doMutationRay()',cost:20,disabled:G.mp<20});
   if(hasGenomeBlast)actions.push({icon:'💥',label:'จีโนมบลาสต์',fn:'doGenomeBlast()',cost:25,disabled:G.mp<25});
   actions.push({icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0});
@@ -792,6 +1011,7 @@ function setBattleActions(){
 }
 function doQuizAttack(){
   if(G.mp<10)return;G.mp=Math.max(0,G.mp-10);updateHUD();
+  playBossAnim('hit');
   openQuiz((correct)=>{
     if(!G.inBattle)return;
     if(correct){
@@ -832,7 +1052,7 @@ function doGeneShield(){
   const shield=Math.floor(G.enemy.atk*1.5);
   G.hp=Math.min(G.hpMax,G.hp+shield);updateHUD();
   floatNum(`+${shield}`,'#818cf8','playerFighter');
-  addMsg(`🛡️ โล่จีนป้องกัน +${shield} HP!`,'reward');setBattleActions();
+  addMsg(`🛡️ โล่ป้องกัน +${shield} HP!`,'reward');setBattleActions();
 }
 function doMutationRay(){
   if(G.mp<20)return;G.mp=Math.max(0,G.mp-20);updateHUD();
@@ -875,7 +1095,11 @@ function doFlee(){
 function winBattle(){
   G.inBattle=false;const e=G.enemy;G.enemy=null;hideEnemy();
   G.xp+=e.xp;G.gold+=e.gold;G.items.dna_fragment++;G.mp=Math.min(G.mpMax,G.mp+15);G.battlesWon++;
+  playBossAnim('dead', ()=>{
   sfxVictory();
+  addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
+});
+// ลบหรือ comment บรรทัด sfxVictory(); เดิมออก
   addMsg(`🏆 ชนะ! <strong>${e.name}</strong> พ่ายแพ้!`,'reward');
   addMsg(`✨ XP +${e.xp} | 💰 +${e.gold} | 🧬 DNA Fragment +1`,'reward');
   if(e.isFinal){
