@@ -310,8 +310,18 @@ body{
         <div class="zone-info"><div class="zone-name">แดนมืด Mutation</div><div class="zone-sub">Lv.5 ขึ้นไป</div></div>
         <div class="zone-lock" id="zone3lock">🔒</div>
       </div>
-    </div>
-
+      <div style="padding:10px 12px;border-top:1px solid var(--border);margin-top:4px;">
+  <div style="font-size:0.62rem;color:var(--dim);font-weight:700;letter-spacing:1px;margin-bottom:7px;">⚡ ทักษะ</div>
+  <div id="skillListMap"></div>
+</div>
+<div style="padding:10px 12px;border-top:1px solid var(--border);">
+  <div style="font-size:0.62rem;color:var(--dim);font-weight:700;letter-spacing:1px;margin-bottom:7px;">🎒 ไอเทม</div>
+  <div id="itemListMap"></div>
+</div>
+<div style="padding:10px 12px;border-top:1px solid var(--border);">
+  <div style="font-size:0.62rem;color:var(--dim);font-weight:700;letter-spacing:1px;margin-bottom:7px;">📊 สถิติ</div>
+  <div id="statListMap"></div>
+</div>
     <!-- ADVENTURE CENTER -->
     <div class="adventure">
       <div class="scene">
@@ -687,6 +697,12 @@ function updateSkillPanel(){
     <div class="item-row">❌ ตอบผิด <span class="item-count" style="color:var(--red)">${G.totalWrong}</span></div>
     <div class="item-row">🏆 ชนะ <span class="item-count" style="color:var(--yellow)">${G.battlesWon}</span></div>
   `;
+  const skillMap=document.getElementById('skillListMap');
+  if(skillMap)skillMap.innerHTML=list.innerHTML;
+  const itemMap=document.getElementById('itemListMap');
+  if(itemMap)itemMap.innerHTML=items.innerHTML;
+  const statMap=document.getElementById('statListMap');
+  if(statMap)statMap.innerHTML=stats.innerHTML;
 }
 function toggleMap(){
   const p=document.getElementById('mapPanel'),ov=document.getElementById('mapOverlay');
