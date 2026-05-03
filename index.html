@@ -207,6 +207,20 @@ body{
 /* PIXEL BOSS CANVAS */
 .boss-canvas-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;}
 #bossPixelCanvas{image-rendering:pixelated;image-rendering:crisp-edges;}  
+  /* GAME OVER SCREEN */
+.gameover-screen{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;transition:background 0.5s ease;pointer-events:none;}
+.gameover-screen.show{background:rgba(0,0,0,0.92);pointer-events:all;}
+.gameover-title{font-family:'Prompt',sans-serif;font-size:clamp(3rem,12vw,5rem);font-weight:900;color:var(--red);opacity:0;transform:scale(2);transition:all 0.6s cubic-bezier(.34,1.56,.64,1);margin-bottom:10px;text-shadow:0 0 40px rgba(248,113,113,0.8);}
+.gameover-screen.show .gameover-title{opacity:1;transform:scale(1);}
+.gameover-sub{color:#94a3b8;font-size:clamp(0.9rem,3vw,1.1rem);opacity:0;transform:translateY(20px);transition:all 0.5s ease 0.4s;margin-bottom:30px;}
+.gameover-screen.show .gameover-sub{opacity:1;transform:translateY(0);}
+.gameover-stats{display:flex;gap:20px;margin-bottom:30px;opacity:0;transition:all 0.5s ease 0.6s;}
+.gameover-screen.show .gameover-stats{opacity:1;}
+.gameover-stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 20px;text-align:center;}
+.gameover-stat-val{font-family:'Prompt',sans-serif;font-size:1.4rem;font-weight:900;color:var(--red);}
+.gameover-stat-lbl{font-size:0.7rem;color:var(--dim);}
+.gameover-btn{opacity:0;transition:all 0.5s ease 0.8s;}
+.gameover-screen.show .gameover-btn{opacity:1;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(100,200,255,0.2);border-radius:2px;}
@@ -1008,6 +1022,8 @@ function setBattleActions(){
   actions.push({icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0});
   actions.push({icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true});
   setActions(actions.slice(0,6));
+  const allDisabled = actions.slice(0,6).every(a => a.disabled && a.fn !== 'doFlee()');
+  if(allDisabled && G.items.potion <= 0) checkGameOver();
 }
 function doQuizAttack(){
   if(G.mp<10)return;G.mp=Math.max(0,G.mp-10);updateHUD();
@@ -1114,8 +1130,10 @@ function winBattle(){
 function loseGame(){
   G.inBattle=false;hideEnemy();clearMsgs();
   addMsg('💀 HP หมด! พ่ายแพ้...','damage');
-  addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
   G.hp=Math.floor(G.hpMax*0.5);G.mp=Math.floor(G.mpMax*0.7);updateHUD();
+  // ตรวจ game over ก่อน
+  if(checkGameOver()) return;
+  addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
   setTimeout(setZoneActions,1000);
 }
 function checkLevelUp(){
@@ -1230,7 +1248,58 @@ function goZone(idx){
   story.forEach((s,i)=>setTimeout(()=>addMsg(s.text,s.type),i*400));
   setTimeout(setZoneActions,story.length*400+200);
 }
+<!-- GAME OVER SCREEN -->
+<div class="gameover-screen" id="gameoverScreen">
+  <div class="gameover-title">GAME OVER</div>
+  <div class="gameover-sub" id="gameoverSub">MP หมด — ไม่สามารถสู้ต่อได้!</div>
+  <div class="gameover-stats" id="gameoverStats"></div>
+  <button class="btn-start gameover-btn" onclick="restartFromGameover()" style="animation:none;">🔄 เริ่มใหม่</button>
+</div>
+  // ══════════════════════════════════════════
+//  GAME OVER SYSTEM
+// ══════════════════════════════════════════
+function checkGameOver(){
+  // MP หมด + HP ต่ำมาก + ไม่มียาเหลือ = GAME OVER
+  const mpTooLow = G.mp < 10;
+  const noPotion = G.items.potion <= 0;
+  const hpDanger = G.hp <= 0;
+  if(hpDanger || (mpTooLow && noPotion && G.inBattle)){
+    showGameOver();
+    return true;
+  }
+  return false;
+}
 
+function showGameOver(){
+  G.inBattle = false;
+  G.enemy = null;
+  hideEnemy();
+  stopBGM();
+  sfxWrong();
+  setTimeout(()=>sfxWrong(),300);
+
+  document.getElementById('gameoverSub').textContent =
+    G.hp <= 0 ? 'HP หมด — นักวิทยาศาสตร์ล้มลง!' : 'MP หมดและไม่มียาเหลือ — ไม่สามารถสู้ต่อได้!';
+
+  document.getElementById('gameoverStats').innerHTML = `
+    <div class="gameover-stat"><div class="gameover-stat-val">Lv.${G.lv}</div><div class="gameover-stat-lbl">เลเวล</div></div>
+    <div class="gameover-stat"><div class="gameover-stat-val">${G.totalCorrect}</div><div class="gameover-stat-lbl">ตอบถูก</div></div>
+    <div class="gameover-stat"><div class="gameover-stat-val">${G.battlesWon}</div><div class="gameover-stat-lbl">ชนะศัตรู</div></div>
+  `;
+
+  const screen = document.getElementById('gameoverScreen');
+  screen.classList.add('show');
+}
+
+function restartFromGameover(){
+  document.getElementById('gameoverScreen').classList.remove('show');
+  Object.assign(G,{lv:1,xp:0,xpMax:100,hp:100,hpMax:100,mp:50,mpMax:50,gold:0,
+    zone:0,skills:['analyze','quiz_attack'],items:{potion:2,dna_fragment:0,antidote:0},
+    inBattle:false,enemy:null,quizCallback:null,quizCorrect:false,quizTimeout:false,
+    timerInterval:null,questionQueue:{0:[],1:[],2:[],3:[]},
+    totalCorrect:0,totalWrong:0,battlesWon:0,gameCleared:false});
+  updateHUD();updateSkillPanel();updateMapZones();goZone(0);
+}
 // ══════════════════════════════════════════
 //  START
 // ══════════════════════════════════════════
