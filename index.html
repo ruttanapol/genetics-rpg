@@ -1210,7 +1210,6 @@ function loseGame(){
     updateHUD();
     addMsg('🔄 ฟื้นฟู — HP คืนครึ่งหนึ่ง MP คืน 70%','narrator');
     setTimeout(setZoneActions,1000);
-  }
 }
 function checkLevelUp(){
   while(G.xp>=G.xpMax){
@@ -1393,7 +1392,7 @@ async function saveStats(result){
     await window.storage.set('scoreboard', JSON.stringify(all), true);
   } catch(e){}
 }
-function showGameOver(){
+async function showGameOver(){
   await saveStats('lose');
   G.inBattle = false;
   G.enemy = null;
