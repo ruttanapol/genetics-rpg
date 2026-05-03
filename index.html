@@ -240,7 +240,9 @@ body{
     คุณคือ <strong>นักวิทยาศาสตร์รุ่นใหม่</strong> ที่ต้องออกผจญภัยใน 4 โซน
     ตอบคำถามพันธุศาสตร์เพื่อเอาชนะศัตรู และกอบกู้รหัส DNA ให้กลับคืนมา!
   </div>
-  <button class="btn-start" onclick="startGame()">⚔️ เริ่มผจญภัย</button>
+  <input id="playerNameInput" type="text" maxlength="20" placeholder="ใส่ชื่อของคุณ..."
+  style="padding:10px 20px;border-radius:50px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);font-size:0.95rem;font-family:'Sarabun',sans-serif;text-align:center;outline:none;width:260px;margin-bottom:12px;">
+<button class="btn-start" onclick="startGame()">⚔️ เริ่มผจญภัย</button>
   <div style="margin-top:24px;font-size:0.75rem;color:#475569;letter-spacing:1.5px;text-transform:uppercase;">
     Created by <span style="color:var(--cyan);font-weight:700;letter-spacing:2px;">Kru Rattanapol</span>
     <span style="color:#334155;margin:0 8px;">|</span>
@@ -401,6 +403,10 @@ body{
   <div class="victory-title">ภารกิจสำเร็จ!</div>
   <div class="victory-sub">คุณเอาชนะ <strong style="color:var(--red)">บอสสูงสุด — จักรพรรดิ์ Mutation</strong> ได้แล้ว!<br>รหัส DNA ของ Bio-Sphere ได้รับการกอบกู้กลับคืนมาสำเร็จ! 🧬✨</div>
   <div class="victory-stats" id="victoryStats"></div>
+  <div style="width:100%;max-width:420px;margin-bottom:24px;">
+    <div style="font-family:'Prompt',sans-serif;font-size:0.8rem;font-weight:700;color:var(--yellow);letter-spacing:2px;margin-bottom:10px;text-align:center;">🏆 HALL OF FAME</div>
+    <div id="hofList"></div>
+  </div>
   <button class="btn-start" onclick="restartGame()" style="animation:none;">🔄 เล่นใหม่</button>
 </div>
 
@@ -1178,7 +1184,7 @@ function checkLevelUp(){
 // ══════════════════════════════════════════
 //  VICTORY
 // ══════════════════════════════════════════
-function showVictory(){
+async function showVictory(){
   sfxVictory();
   const acc=G.totalCorrect+G.totalWrong>0?Math.round(G.totalCorrect/(G.totalCorrect+G.totalWrong)*100):0;
   document.getElementById('victoryStats').innerHTML=`
@@ -1189,7 +1195,36 @@ function showVictory(){
     <div class="vstat"><div class="vstat-val">${G.gold}</div><div class="vstat-lbl">💰 Gold</div></div>
     <div class="vstat"><div class="vstat-val">${G.items.dna_fragment}</div><div class="vstat-lbl">🧬 Fragment</div></div>
   `;
+  // บันทึกลง shared storage
+  const entry={name:G.name,lv:G.lv,acc,correct:G.totalCorrect,wrong:G.totalWrong,battles:G.battlesWon,date:new Date().toLocaleDateString('th-TH'),ts:Date.now()};
+  try{
+    const key='hof:'+Date.now()+':'+Math.random().toString(36).slice(2);
+    await window.storage.set(key,JSON.stringify(entry),true);
+  }catch(e){}
+  // โหลดและแสดง Hall of Fame
+  await renderHallOfFame();
   document.getElementById('victoryScreen').classList.remove('hidden');
+}
+
+async function renderHallOfFame(){
+  const hofEl=document.getElementById('hofList');if(!hofEl)return;
+  hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;">กำลังโหลด...</div>';
+  try{
+    const keys=await window.storage.list('hof:',true);
+    const entries=[];
+    for(const k of keys.keys){
+      try{const r=await window.storage.get(k,true);if(r)entries.push(JSON.parse(r.value));}catch(e){}
+    }
+    entries.sort((a,b)=>b.acc-a.acc||(b.correct-a.correct)||(a.ts-b.ts));
+    if(entries.length===0){hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;text-align:center;">ยังไม่มีข้อมูล</div>';return;}
+    hofEl.innerHTML=entries.slice(0,10).map((e,i)=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.03);margin-bottom:4px;font-size:0.75rem;">
+        <span style="color:${i===0?'var(--yellow)':i===1?'#94a3b8':i===2?'#cd7c2f':'var(--dim)'};font-weight:700;width:18px;">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+        <span style="flex:1;font-weight:600;color:var(--text)">${e.name}</span>
+        <span style="color:${e.acc>=70?'var(--green)':'var(--yellow)'};font-weight:700">${e.acc}%</span>
+        <span style="color:var(--dim)">${e.date}</span>
+      </div>`).join('');
+  }catch(e){hofEl.innerHTML='<div style="color:var(--dim);font-size:0.75rem;">โหลดไม่ได้</div>';}
 }
 function restartGame(){
   document.getElementById('victoryScreen').classList.add('hidden');
@@ -1319,6 +1354,10 @@ function restartFromGameover(){
 //  START
 // ══════════════════════════════════════════
 function startGame(){
+  const nameInput=document.getElementById('playerNameInput');
+  const name=(nameInput.value.trim())||'นักวิทยาศาสตร์ไม่มีชื่อ';
+  G.name=name;
+  document.getElementById('hudName').textContent=name;
   document.getElementById('titleScreen').classList.remove('active');
   document.getElementById('gameScreen').classList.add('active');
   updateHUD();updateSkillPanel();updateMapZones();goZone(0);
