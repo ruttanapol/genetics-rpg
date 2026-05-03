@@ -1022,8 +1022,8 @@ function setBattleActions(){
   actions.push({icon:'💊',label:`ยาฟื้น (×${G.items.potion})`,fn:'usePotion()',disabled:G.items.potion<=0});
   actions.push({icon:'🏃',label:'หลบหนี',fn:'doFlee()',danger:true});
   setActions(actions.slice(0,6));
-  const allDisabled = actions.slice(0,6).every(a => a.disabled && a.fn !== 'doFlee()');
-  if(allDisabled && G.items.potion <= 0) checkGameOver();
+  const canAct = G.mp >= 5 || G.items.potion > 0;
+if(!canAct) checkGameOver();
 }
 function doQuizAttack(){
   if(G.mp<10)return;G.mp=Math.max(0,G.mp-10);updateHUD();
